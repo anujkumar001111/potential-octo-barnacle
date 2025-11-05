@@ -7,7 +7,7 @@ import { store } from "./store";
 /**
  * Supported providers
  */
-export type ProviderType = 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter';
+export type ProviderType = 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter' | 'custom';
 
 /**
  * Model configuration interface
@@ -42,6 +42,11 @@ export interface UserModelConfigs {
   };
   openrouter?: {
     apiKey?: string;
+    model?: string;
+  };
+  custom?: {
+    apiKey?: string;
+    baseURL?: string;
     model?: string;
   };
   selectedProvider?: ProviderType;
@@ -220,6 +225,14 @@ export class ConfigManager {
           apiKey: userConfigs.openrouter?.apiKey || process.env.OPENROUTER_API_KEY || ''
         };
 
+      case 'custom':
+        return {
+          provider: 'openai',
+          model: userConfigs.custom?.model || 'gpt-4o',
+          apiKey: userConfigs.custom?.apiKey || process.env.CUSTOM_API_KEY || '',
+          baseURL: userConfigs.custom?.baseURL || process.env.CUSTOM_API_URL || 'http://143.198.174.251:8317'
+        };
+
       default:
         return null;
     }
@@ -242,7 +255,8 @@ export class ConfigManager {
       qwen: 'QWEN_API_KEY',
       google: 'GOOGLE_API_KEY',
       anthropic: 'ANTHROPIC_API_KEY',
-      openrouter: 'OPENROUTER_API_KEY'
+      openrouter: 'OPENROUTER_API_KEY',
+      custom: 'CUSTOM_API_KEY'
     };
 
     const envKey = envKeys[provider];
@@ -401,6 +415,23 @@ export class ConfigManager {
           apiKey: providerConfig.apiKey || "",
           config: {
             maxTokens
+          }
+        };
+        break;
+
+      case 'custom':
+        defaultLLM = {
+          provider: providerConfig.provider,
+          model: providerConfig.model,
+          apiKey: providerConfig.apiKey || "",
+          config: {
+            baseURL: (providerConfig.baseURL || "http://143.198.174.251:8317").replace(/\/+$/, '').replace(/\/v1$/, '') + '/v1',
+            maxTokens,
+            temperature: 0.7
+          },
+          fetch: (url: string, options?: any) => {
+            logInfo('Custom API request:', providerConfig.model, 'to', providerConfig.baseURL);
+            return fetch(url, options);
           }
         };
         break;

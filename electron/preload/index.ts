@@ -43,10 +43,11 @@ const api = {
   // Model configuration APIs
   getUserModelConfigs: () => ipcRenderer.invoke('config:get-user-configs'),
   saveUserModelConfigs: (configs: any) => ipcRenderer.invoke('config:save-user-configs', configs),
-  getModelConfig: (provider: 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter') => ipcRenderer.invoke('config:get-model-config', provider),
-  getApiKeySource: (provider: 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter') => ipcRenderer.invoke('config:get-api-key-source', provider),
+  getModelConfig: (provider: 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter' | 'custom') => ipcRenderer.invoke('config:get-model-config', provider),
+  getApiKeySource: (provider: 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter' | 'custom') => ipcRenderer.invoke('config:get-api-key-source', provider),
   getSelectedProvider: () => ipcRenderer.invoke('config:get-selected-provider'),
-  setSelectedProvider: (provider: 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter') => ipcRenderer.invoke('config:set-selected-provider', provider),
+  setSelectedProvider: (provider: 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter' | 'custom') => ipcRenderer.invoke('config:set-selected-provider', provider),
+  getEnvVar: (key: string) => ipcRenderer.invoke('config:get-env-var', key),
 
   // Agent configuration APIs
   getAgentConfig: () => ipcRenderer.invoke('agent:get-config'),

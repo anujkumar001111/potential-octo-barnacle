@@ -72,6 +72,16 @@ export function registerConfigHandlers() {
     }
   });
 
+  // Get environment variable
+  ipcMain.handle('config:get-env-var', async (_event, key: string) => {
+    try {
+      return process.env[key] || '';
+    } catch (error: any) {
+      console.error('IPC config:get-env-var error:', error);
+      return '';
+    }
+  });
+
   // Set selected provider
   ipcMain.handle('config:set-selected-provider', async (_event, provider: ProviderType) => {
     try {

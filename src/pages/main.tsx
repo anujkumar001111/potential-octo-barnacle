@@ -648,9 +648,13 @@ export default function main() {
 
         let result: EkoResult | null = null;
 
-        if (ekoRequest) {
+        if (ekoRequest && isCurrentTaskRunning) {
             console.log('Waiting for current request to finish, avoiding conflicts');
             await window.api.ekoCancelTask(taskIdRef.current);
+            await ekoRequest;
+        } else if (ekoRequest && !isCurrentTaskRunning) {
+            // Task is finished but promise still exists, just wait for it to cleanup
+            console.log('Previous request finished, waiting for cleanup');
             await ekoRequest;
         }
 
@@ -685,6 +689,9 @@ export default function main() {
             }
             console.error('Failed to send message:', error);
             antdMessage.error(t('failed_send_message'));
+        } finally {
+            // Clear ekoRequest after completion
+            setEkoRequest(null);
         }
     }
 

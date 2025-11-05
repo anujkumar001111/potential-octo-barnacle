@@ -1,5 +1,5 @@
 // Supported providers
-export type ProviderType = 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter';
+export type ProviderType = 'deepseek' | 'qwen' | 'google' | 'anthropic' | 'openrouter' | 'custom';
 
 // Model configuration types
 export interface UserModelConfigs {
@@ -22,6 +22,11 @@ export interface UserModelConfigs {
   }
   openrouter?: {
     apiKey?: string
+    model?: string
+  }
+  custom?: {
+    apiKey?: string
+    baseURL?: string
     model?: string
   }
   selectedProvider?: ProviderType
