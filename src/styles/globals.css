@@ -110,22 +110,22 @@
 }
 
 @theme {
-  /* Vibrant tech-inspired gradient background with rich colors */
+  /* Monochrome gradient background - matching the premium monochrome palette */
   --background-image-main-view:
-    radial-gradient(ellipse at 15% 15%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
-    radial-gradient(ellipse at 85% 20%, rgba(147, 51, 234, 0.12) 0%, transparent 45%),
-    radial-gradient(ellipse at 20% 85%, rgba(16, 185, 129, 0.10) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 80%, rgba(96, 165, 250, 0.08) 0%, transparent 50%),
-    linear-gradient(135deg, #0a0e17 0%, #0d1117 30%, #050810 60%, #0a0e17 100%);
+    radial-gradient(ellipse at 15% 15%, rgba(255, 255, 255, 0.02) 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 20%, rgba(255, 255, 255, 0.015) 0%, transparent 45%),
+    radial-gradient(ellipse at 20% 85%, rgba(255, 255, 255, 0.01) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 80%, rgba(255, 255, 255, 0.008) 0%, transparent 50%),
+    linear-gradient(135deg, #171717 0%, #212121 30%, #171717 60%, #212121 100%);
   --background-image-main-view-header: rgba(255, 255, 255, 0.05);
   --background-image-main-view-footer: rgba(0, 0, 0, 0.3);
 
   --background-image-icon-bg-common: rgba(255, 255, 255, 0.08);
-  --background-image-icon-bg-voice-open: rgba(59, 130, 246, 0.3);
+  --background-image-icon-bg-voice-open: rgba(255, 255, 255, 0.15);
 
 
-  --shadow-tool-hover: 0 0 20px rgba(59, 130, 246, 0.3);
-  --color-bg-tool-hover: rgba(59, 130, 246, 0.15);
+  --shadow-tool-hover: 0 0 20px rgba(255, 255, 255, 0.1);
+  --color-bg-tool-hover: rgba(255, 255, 255, 0.08);
   --color-border-tool-hover: rgba(255, 255, 255, 0.2);
 
 
@@ -136,19 +136,19 @@
 
   --my-font: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Background colors - Fellou.ai inspired glass morphism */
+  /* Background colors - Monochrome glass morphism */
   /* Header */
   --background-image-header: rgba(255, 255, 255, 0.03);
   /* Message */
   --background-image-message: rgba(255, 255, 255, 0.05);
-  /* Atlas AI assistant */
-  --background-image-atlas: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
-  /* Task execution button background */
-  --background-image-ask-status: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  /* Atlas AI assistant - monochrome gradient */
+  --background-image-atlas: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.05) 100%);
+  /* Task execution button background - monochrome */
+  --background-image-ask-status: linear-gradient(135deg, #353535 0%, #2E2E2E 100%);
   /* Deep thinking */
   --background-color-thinking: rgba(255, 255, 255, 0.04);
-  /* Steps */
-  --background-color-step: #3B82F6;
+  /* Steps - monochrome accent */
+  --background-color-step: #7B7B7B;
   /* Tool call background */
   --background-color-tool-call: rgba(255, 255, 255, 0.03);
 
@@ -208,8 +208,8 @@
   display: inline-block;
   padding: 2px; /* Border width */
   border-radius: 12px;
-  /* Fellou.ai purple gradient border - subtle */
-  background: linear-gradient(135deg, rgba(94, 49, 216, 0.3), rgba(145, 75, 241, 0.2), rgba(94, 49, 216, 0.3));
+  /* Monochrome gradient border - subtle */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.15));
   backdrop-filter: blur(12px);
   transition: all 0.3s ease;
 }
@@ -226,10 +226,10 @@
 
 /* Add focus effect directly to textarea with a glowing border */
 .gradient-border textarea:focus {
-  box-shadow: 0 0 0 2px rgba(145, 75, 241, 0.4) inset;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) inset;
 }
 
-/* Ant Design Select dropdown customization - Fellou.ai purple theme */
+/* Ant Design Select dropdown customization - Monochrome theme */
 /* Dropdown items styling - global since dropdownStyle only handles container */
 .ant-select-item {
   color: rgba(255, 255, 255, 0.9) !important;
@@ -240,29 +240,29 @@
 
 /* Hover state for dropdown items */
 .ant-select-item-option-active:not(.ant-select-item-option-selected) {
-  background: rgba(94, 49, 216, 0.15) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Selected state */
 .ant-select-item-option-selected {
-  background: rgba(94, 49, 216, 0.25) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
   font-weight: 500 !important;
 }
 
 /* Selected state hover */
 .ant-select-item-option-selected.ant-select-item-option-active {
-  background: rgba(94, 49, 216, 0.35) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
 }
 
 /* Select box focus state */
 .custom-select.ant-select-focused .ant-select-selector {
-  border-color: rgba(145, 75, 241, 0.4) !important;
-  box-shadow: 0 0 0 2px rgba(145, 75, 241, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Select box hover state */
 .custom-select:not(.ant-select-disabled):hover .ant-select-selector {
-  border-color: rgba(145, 75, 241, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 @theme inline {
@@ -292,11 +292,11 @@ body,
   padding: 0;
   width: 100%;
   height: 100%;
-  /* Subtle tech-inspired background with minimal distraction */
+  /* Pure monochrome background with subtle gradients */
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
-    radial-gradient(ellipse at 0% 100%, rgba(59, 130, 246, 0.02) 0%, transparent 40%),
-    radial-gradient(ellipse at 100% 100%, rgba(96, 165, 250, 0.02) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.015) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 100%, rgba(255, 255, 255, 0.01) 0%, transparent 40%),
+    radial-gradient(ellipse at 100% 100%, rgba(255, 255, 255, 0.01) 0%, transparent 40%),
     #000000;
   background-color: #000000;
   background-attachment: fixed;
