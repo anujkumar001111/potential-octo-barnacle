@@ -18,7 +18,13 @@ import {
   browserSwitchTabTool,
   // Phase 3: Core interaction tools
   browserPasteTextTool,
-  browserWaitForElementTool
+  browserWaitForElementTool,
+  // Phase 5: Advanced gesture tools
+  browserDragAndDropTool,
+  browserSetZoomTool,
+  browserPinchZoomTool,
+  browserKeyboardMouseComboTool,
+  browserScrollHorizontalTool
 } from "./browser-tools";
 
 // Phase 4: Import advanced browser tools
@@ -209,12 +215,20 @@ export class EkoService {
       browserAgent.addTool(cloneElementToFileTool);
       browserAgent.addTool(extractCompleteElementToFileTool);
 
+      // Phase 5: Register advanced gesture tools
+      browserAgent.addTool(browserDragAndDropTool);
+      browserAgent.addTool(browserSetZoomTool);
+      browserAgent.addTool(browserPinchZoomTool);
+      browserAgent.addTool(browserKeyboardMouseComboTool);
+      browserAgent.addTool(browserScrollHorizontalTool);
+
       this.agents.push(browserAgent);
       Log.info('BrowserAgent enabled with custom prompt:', agentConfig.browserAgent.customPrompt ? 'Yes' : 'No');
       Log.info('Phase 1 browser tools registered: 6 advanced tools added');
       Log.info('Phase 2 browser tools registered: 3 tab management tools added');
       Log.info('Phase 3 browser tools registered: 2 core interaction tools added');
       Log.info('Phase 4 advanced browser tools registered: 22 tools added (7 element extraction + 9 JS functions + 2 CDP commands + 2 CDP extraction + 2 file operations)');
+      Log.info('Phase 5 gesture tools registered: 5 tools added (drag-drop, zoom, pinch-zoom, keyboard-mouse-combo, horizontal-scroll)');
     }
 
     if (agentConfig.fileAgent.enabled) {

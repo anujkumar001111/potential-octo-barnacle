@@ -41,6 +41,13 @@ export { browserSwitchTabTool } from './browser-switch-tab';
 export { browserPasteTextTool } from './browser-paste-text';
 export { browserWaitForElementTool } from './browser-wait-for-element';
 
+// Phase 5 tools - Advanced Gestures & Interactions
+export { browserDragAndDropTool } from './browser-drag-and-drop';
+export { browserSetZoomTool } from './browser-set-zoom';
+export { browserPinchZoomTool } from './browser-pinch-zoom';
+export { browserKeyboardMouseComboTool } from './browser-keyboard-mouse-combo';
+export { browserScrollHorizontalTool } from './browser-scroll-horizontal';
+
 // Shared utilities
 export * from './shared/error-codes';
 export * from './shared/types';
