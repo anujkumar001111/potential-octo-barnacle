@@ -21,6 +21,37 @@ import {
   browserWaitForElementTool
 } from "./browser-tools";
 
+// Phase 4: Import advanced browser tools
+import {
+  // Element extraction tools (7 tools)
+  extractElementStylesTool,
+  extractElementStructureTool,
+  extractElementEventsTool,
+  extractElementAnimationsTool,
+  extractElementAssetsTool,
+  extractRelatedFilesTool,
+  cloneElementCompleteTool,
+  // JavaScript function management tools (9 tools)
+  discoverGlobalFunctionsTool,
+  discoverObjectMethodsTool,
+  callJavaScriptFunctionTool,
+  inspectFunctionSignatureTool,
+  createPersistentFunctionTool,
+  injectAndExecuteScriptTool,
+  executeFunctionSequenceTool,
+  getExecutionContextsTool,
+  getFunctionExecutorInfoTool,
+  // CDP command tools (2 tools)
+  executeCdpCommandTool,
+  listCdpCommandsTool,
+  // CDP extraction tools (2 tools)
+  extractElementStylesCdpTool,
+  extractCompleteElementCdpTool,
+  // File operations tools (2 tools)
+  cloneElementToFileTool,
+  extractCompleteElementToFileTool
+} from "./advanced-browser-tools";
+
 export class EkoService {
   private eko: Eko | null = null;
   private mainWindow: BrowserWindow;
@@ -145,11 +176,45 @@ export class EkoService {
       browserAgent.addTool(browserPasteTextTool);
       browserAgent.addTool(browserWaitForElementTool);
 
+      // Phase 4: Register advanced browser tools
+      // Element extraction tools (7 tools)
+      browserAgent.addTool(extractElementStylesTool);
+      browserAgent.addTool(extractElementStructureTool);
+      browserAgent.addTool(extractElementEventsTool);
+      browserAgent.addTool(extractElementAnimationsTool);
+      browserAgent.addTool(extractElementAssetsTool);
+      browserAgent.addTool(extractRelatedFilesTool);
+      browserAgent.addTool(cloneElementCompleteTool);
+
+      // JavaScript function management tools (9 tools)
+      browserAgent.addTool(discoverGlobalFunctionsTool);
+      browserAgent.addTool(discoverObjectMethodsTool);
+      browserAgent.addTool(callJavaScriptFunctionTool);
+      browserAgent.addTool(inspectFunctionSignatureTool);
+      browserAgent.addTool(createPersistentFunctionTool);
+      browserAgent.addTool(injectAndExecuteScriptTool);
+      browserAgent.addTool(executeFunctionSequenceTool);
+      browserAgent.addTool(getExecutionContextsTool);
+      browserAgent.addTool(getFunctionExecutorInfoTool);
+
+      // CDP command tools (2 tools)
+      browserAgent.addTool(executeCdpCommandTool);
+      browserAgent.addTool(listCdpCommandsTool);
+
+      // CDP extraction tools (2 tools)
+      browserAgent.addTool(extractElementStylesCdpTool);
+      browserAgent.addTool(extractCompleteElementCdpTool);
+
+      // File operations tools (2 tools)
+      browserAgent.addTool(cloneElementToFileTool);
+      browserAgent.addTool(extractCompleteElementToFileTool);
+
       this.agents.push(browserAgent);
       Log.info('BrowserAgent enabled with custom prompt:', agentConfig.browserAgent.customPrompt ? 'Yes' : 'No');
       Log.info('Phase 1 browser tools registered: 6 advanced tools added');
       Log.info('Phase 2 browser tools registered: 3 tab management tools added');
       Log.info('Phase 3 browser tools registered: 2 core interaction tools added');
+      Log.info('Phase 4 advanced browser tools registered: 22 tools added (7 element extraction + 9 JS functions + 2 CDP commands + 2 CDP extraction + 2 file operations)');
     }
 
     if (agentConfig.fileAgent.enabled) {
