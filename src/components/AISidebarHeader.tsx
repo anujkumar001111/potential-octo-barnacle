@@ -1,16 +1,17 @@
-import React from 'react'
-import { Button } from 'antd'
-import { HistoryOutlined, ToolOutlined } from '@ant-design/icons'
+import React, { useState } from 'react'
+import { Button, Tooltip } from 'antd'
+import { HistoryOutlined, ToolOutlined, SettingOutlined } from '@ant-design/icons'
 import { useRouter } from 'next/router'
 import { HistoryPanel } from '@/components/HistoryPanel'
+import { SettingsDrawer } from '@/components/SettingsDrawer'
 import { useHistoryStore } from '@/stores/historyStore'
-import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
 
 export default function AISidebarHeader() {
   const router = useRouter()
   const { taskId, executionId } = router.query
   const { t } = useTranslation('header')
+  const [showSettings, setShowSettings] = useState(false)
 
   // Check if in scheduled task detail mode
   const isTaskDetailMode = !!taskId && !!executionId
@@ -36,7 +37,7 @@ export default function AISidebarHeader() {
     <div className="ai-sidebar-header">
       {/* Main header row */}
       <div className="header-main-row">
-        {/* Manus Logo - updated branding */}
+        {/* Loᥫ᭡li Logo - updated branding */}
         {!isTaskDetailMode && (
           <div
             onClick={() => navigateHome()}
@@ -51,7 +52,7 @@ export default function AISidebarHeader() {
               }
             }}
           >
-            Manus
+            Loᥫ᭡li
           </div>
         )}
 
@@ -69,32 +70,41 @@ export default function AISidebarHeader() {
         <div className="action-buttons">
           {/* Toolbox button - only show on home page and not in scheduled task mode */}
           {!isTaskDetailMode && (router.pathname === '/home' || router.pathname === '/') && (
-            <Button
-              type="text"
-              icon={<ToolOutlined />}
-              size="small"
-              onClick={() => router.push('/toolbox')}
-              className="toolbox-button"
-              aria-label="Open toolbox page"
-            >
-              {t('toolbox')}
-            </Button>
+            <Tooltip title={t('toolbox')} placement="bottom" mouseEnterDelay={0.2}>
+              <Button
+                type="text"
+                icon={<ToolOutlined />}
+                size="small"
+                onClick={() => router.push('/toolbox')}
+                className="toolbox-button"
+                aria-label={t('toolbox')}
+              />
+            </Tooltip>
           )}
 
-          {/* History button */}
-          <Button
-            type="text"
-            icon={<HistoryOutlined />}
-            size="small"
-            onClick={() => setShowHistoryPanel(true)}
-            className="history-button"
-            aria-label="Open task execution history"
-          >
-            {isTaskDetailMode ? t('execution_history') : t('history')}
-          </Button>
+          {/* History button - icon only */}
+          <Tooltip title={isTaskDetailMode ? t('execution_history') : t('history')} placement="bottom" mouseEnterDelay={0.2}>
+            <Button
+              type="text"
+              icon={<HistoryOutlined />}
+              size="small"
+              onClick={() => setShowHistoryPanel(true)}
+              className="history-button"
+              aria-label={isTaskDetailMode ? t('execution_history') : t('history')}
+            />
+          </Tooltip>
 
-          {/* Language Switcher */}
-          <LanguageSwitcher />
+          {/* Settings button - replaces language switcher */}
+          <Tooltip title="Settings" placement="bottom" mouseEnterDelay={0.2}>
+            <Button
+              type="text"
+              icon={<SettingOutlined />}
+              size="small"
+              onClick={() => setShowSettings(true)}
+              className="settings-button"
+              aria-label="Settings"
+            />
+          </Tooltip>
         </div>
       </div>
 
@@ -106,6 +116,12 @@ export default function AISidebarHeader() {
         currentTaskId=""
         isTaskDetailMode={isTaskDetailMode}
         scheduledTaskId={taskId as string}
+      />
+
+      {/* Settings Drawer */}
+      <SettingsDrawer
+        visible={showSettings}
+        onClose={() => setShowSettings(false)}
       />
 
       <style jsx>{`
@@ -127,7 +143,7 @@ export default function AISidebarHeader() {
           -webkit-app-region: no-drag;
         }
 
-        /* Manus Logo - premium monochrome styling */
+        /* Loᥫ᭡li Logo - premium monochrome styling */
         .logo {
           font-size: 1.875rem; /* text-3xl = 30px */
           font-weight: 700; /* font-bold */
@@ -206,6 +222,14 @@ export default function AISidebarHeader() {
         }
 
         :global(.history-button:hover) {
+          background-color: var(--mono-medium) !important;
+        }
+
+        :global(.settings-button) {
+          color: var(--text-primary-mono) !important;
+        }
+
+        :global(.settings-button:hover) {
           background-color: var(--mono-medium) !important;
         }
       `}</style>

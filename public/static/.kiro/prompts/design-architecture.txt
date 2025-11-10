@@ -1,0 +1,1 @@
+Prompt: Given these requirements, propose an architecture using the architecture template.

@@ -1,0 +1,87 @@
+/**
+ * ResizeHandle Styles
+ */
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.resizeHandle.left {
+  right: -4px;
+}
+
+.resizeHandle.right {
+  left: -4px;
+}
+
+.resizeHandle:hover,
+.resizeHandle.dragging {
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.resizeHandle:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: -2px;
+}
+
+/* Handle line */
+.handleLine {
+  width: 2px;
+  height: 40px;
+  background-color: transparent;
+  border-radius: 1px;
+  transition: all 0.2s ease;
+}
+
+.resizeHandle:hover .handleLine,
+.resizeHandle.dragging .handleLine {
+  background-color: #6366f1;
+  height: 60px;
+}
+
+.resizeHandle.dragging .handleLine {
+  background-color: #7c3aed;
+}
+
+/* Dragging state */
+.resizeHandle.dragging {
+  background-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Touch device support */
+@media (hover: none) and (pointer: coarse) {
+  .resizeHandle {
+    width: 16px;
+  }
+
+  .resizeHandle.left {
+    right: -8px;
+  }
+
+  .resizeHandle.right {
+    left: -8px;
+  }
+
+  .handleLine {
+    width: 3px;
+    height: 60px;
+    background-color: #1a1a1a;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .resizeHandle,
+  .handleLine {
+    transition: none;
+  }
+}

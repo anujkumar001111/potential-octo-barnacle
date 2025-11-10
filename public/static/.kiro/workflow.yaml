@@ -1,0 +1,13 @@
+# KIRO Workflow Definition
+steps:
+  - analyze-requirements
+  - design-architecture
+  - specify-components
+  - decompose-tasks
+  - generate-code
+  - validate-specs
+  - update-specs
+rules:
+  - No implementation before specs
+  - Every decision must be logged
+  - All specifications must be validated by templates before progressing

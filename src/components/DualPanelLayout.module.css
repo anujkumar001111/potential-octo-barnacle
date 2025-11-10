@@ -1,0 +1,284 @@
+/**
+ * DualPanelLayout Styles
+ *
+ * Layout styles for the dual sidepanel browser interface with smooth transitions.
+ */
+
+.dualPanelLayout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background-color: #000000;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Navigation Bar */
+.navigationBar {
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+/* Main Content Area (panels + browser) */
+.contentArea {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  min-height: 0; /* Allow flex children to shrink */
+}
+
+/* Left Panel (Tabs & Workspaces) */
+.leftPanel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: #000000;
+  border-right: 1px solid #1a1a1a;
+  transition: all 300ms ease-in-out;
+  z-index: 20;
+  overflow: hidden;
+}
+
+.leftPanel.expanded {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.leftPanel.collapsed {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Right Panel (AI Sidebar) */
+.rightPanel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  background-color: #000000;
+  border-left: 1px solid #1a1a1a;
+  transition: all 300ms ease-in-out;
+  z-index: 20;
+  overflow: hidden;
+}
+
+.rightPanel.expanded {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.rightPanel.collapsed {
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Browser Preview */
+.browserPreview {
+  flex: 1;
+  background-color: #000000;
+  transition: margin 300ms ease-in-out;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  margin: 8px;
+}
+
+/* Panel Content Container */
+.panelContent {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Panel scrollbar styling */
+.panelContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panelContent::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+.panelContent::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.panelContent::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
+/* Panel Placeholders (development) */
+.panelPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Browser Placeholder (development) */
+.browserPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  border: 2px dashed #1a1a1a;
+  border-radius: 8px;
+}
+
+.placeholderContent {
+  text-align: center;
+  color: #9ca3af;
+}
+
+.placeholderContent h2 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.placeholderContent p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* Debug Info (development only) */
+.debugInfo {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  padding: 8px 16px;
+  background-color: rgba(0, 0, 0, 0.95);
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  color: #22c55e;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.debugInfo span {
+  white-space: nowrap;
+}
+
+/* Layout Stages (data attributes for debugging) */
+.dualPanelLayout[data-stage="1"] {
+  /* Stage 1: Both panels collapsed */
+}
+
+.dualPanelLayout[data-stage="2"] {
+  /* Stage 2: Left panel open */
+}
+
+.dualPanelLayout[data-stage="3"] {
+  /* Stage 3: Right panel open */
+}
+
+.dualPanelLayout[data-stage="4"] {
+  /* Stage 4: Both panels open */
+}
+
+/* Transitioning state */
+.dualPanelLayout[data-transitioning="true"] {
+  pointer-events: none;
+}
+
+.dualPanelLayout[data-transitioning="true"] .leftPanel,
+.dualPanelLayout[data-transitioning="true"] .rightPanel,
+.dualPanelLayout[data-transitioning="true"] .browserPreview {
+  pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .browserPreview {
+    margin: 4px;
+    border-radius: 4px;
+  }
+
+  .leftPanel,
+  .rightPanel {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Accessibility: High contrast mode */
+@media (prefers-contrast: high) {
+  .leftPanel,
+  .rightPanel {
+    border-width: 2px;
+    border-color: #ffffff;
+  }
+
+  .browserPreview {
+    border: 2px solid #ffffff;
+  }
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .leftPanel,
+  .rightPanel,
+  .browserPreview {
+    transition: none;
+  }
+
+  .leftPanel.collapsed {
+    display: none;
+  }
+
+  .rightPanel.collapsed {
+    display: none;
+  }
+}
+
+/* Focus states for accessibility */
+.leftPanel:focus-within,
+.rightPanel:focus-within {
+  outline: 2px solid #6366f1;
+  outline-offset: -2px;
+}
+
+/* Loading state (optional) */
+.dualPanelLayout[data-loading="true"] .browserPreview::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.1) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

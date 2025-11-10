@@ -1,0 +1,1 @@
+Prompt: Elaborate on this architectural component, producing a specification per the component-spec-template.md.

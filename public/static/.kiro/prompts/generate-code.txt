@@ -1,0 +1,1 @@
+Prompt: Generate code only after specs are validated; reference user story, architecture, and component spec.

@@ -1,0 +1,1 @@
+Prompt: Update artifact if requirements or decisions change; log all changes in decision-log and update traceability matrix.

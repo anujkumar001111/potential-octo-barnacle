@@ -1,0 +1,7 @@
+# Ignore generated placeholder files
+.kiro/.placeholder
+.vscode/.placeholder
+
+# Ignore workspace logs/backups (NOT the spec artifacts or templates)
+.kiro/integration-checklist.md
+.kiro/validation-output.log

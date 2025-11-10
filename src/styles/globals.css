@@ -114,11 +114,11 @@
   /* Atlas AI assistant - monochrome gradient */
   --background-image-atlas: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.05) 100%);
   /* Task execution button background - monochrome */
-  --background-image-ask-status: linear-gradient(135deg, #353535 0%, #1f1f1f 100%);
+  --background-image-ask-status: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
   /* Deep thinking */
   --background-color-thinking: rgba(255, 255, 255, 0.04);
   /* Steps - monochrome accent */
-  --background-color-step: #7B7B7B;
+  --background-color-step: #1a1a1a;
   /* Tool call background */
   --background-color-tool-call: rgba(255, 255, 255, 0.03);
 

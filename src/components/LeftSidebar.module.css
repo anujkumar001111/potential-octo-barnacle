@@ -1,0 +1,117 @@
+/**
+ * Enhanced LeftSidebar Styles
+ *
+ * Styles for Arc-style left sidebar with tabs, workspaces, and favorites.
+ */
+
+.leftSidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #000000;
+  overflow: hidden;
+}
+
+/* Header */
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #1a1a1a;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.headerButton {
+  color: #ffffff;
+  border: none;
+}
+
+.headerButton:hover {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+/* Tab list container */
+.tabListContainer {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+/* Footer */
+.sidebarFooter {
+  padding: 12px;
+  border-top: 1px solid #1a1a1a;
+  flex-shrink: 0;
+}
+
+.newTabButton {
+  background-color: #6366f1;
+  border: none;
+  height: 40px;
+  font-weight: 500;
+}
+
+.newTabButton:hover {
+  background-color: #7c3aed !important;
+}
+
+.newTabButton:active {
+  background-color: #5b21b6 !important;
+}
+
+/* Loading state */
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* Scrollbar styling */
+.tabListContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tabListContainer::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+.tabListContainer::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border-radius: 3px;
+}
+
+.tabListContainer::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebarHeader {
+    padding: 8px;
+  }
+
+  .sidebarFooter {
+    padding: 8px;
+  }
+
+  .newTabButton {
+    height: 36px;
+    font-size: 13px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .container,
+  .container :global(*) {
+    transition: none !important;
+    animation: none !important;
+  }
+}

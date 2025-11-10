@@ -138,12 +138,24 @@ Customize AI agent behavior with custom prompts and manage MCP tools for enhance
 - [API Documentation](./docs/API.md) - Complete API reference for developers
 
 ### Developer Documentation
+
+#### Quick Start Guides
+- [Agent Plan Component Quick Start](./docs/QUICK_START_AGENT_PLAN.md) - Fast reference for using task visualization components
 - [IPC Quick Reference](./docs/IPC_QUICK_REFERENCE.md) - Quick guide for working with IPC communication
+
+#### Architecture & Systems
 - [IPC Architecture Diagrams](./docs/IPC_ARCHITECTURE_DIAGRAM.md) - Visual guide to IPC system with Mermaid diagrams
 - [IPC System Architecture](./docs/eko-docs/architecture/ipc-system.md) - Comprehensive IPC architecture guide
 - [Layout Transformation Architecture](./docs/eko-docs/architecture/layout-transformation.md) - Resizable panel system and WebContentsView coordination
+
+#### Component Documentation
+- [UI Components Guide](./docs/eko-docs/core-concepts/ui-components.md) - Interactive components for task visualization and agent planning
+- [Component API Reference](./docs/COMPONENT_API.md) - Complete API reference for all UI components
+- [Component Changelog](./docs/COMPONENT_CHANGELOG.md) - Version history and component changes
+
+#### Migration & Changes
 - [Architecture Changes Log](./docs/ARCHITECTURE_CHANGES.md) - Track significant architectural changes
-- [Browser View Migration Guide](./docs/BROWSER_VIEW_MIGRATION_GUIDE.md) - **NEW**: Guide for browser view repositioning changes
+- [Browser View Migration Guide](./docs/BROWSER_VIEW_MIGRATION_GUIDE.md) - Guide for browser view repositioning changes
 
 ### Key Architecture Notes
 - **IPC Handler Registration**: All IPC handlers are registered **before** window creation to prevent race conditions

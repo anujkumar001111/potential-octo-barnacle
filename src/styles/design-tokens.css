@@ -20,14 +20,14 @@
      1. BASE COLORS - Monochrome Palette
      ============================================ */
 
-  /* Primary Monochrome */
-  --color-mono-darkest: #1f1f1f;      /* Darkest - browser panel, main backgrounds */
-  --color-mono-dark: #1f1f1f;         /* Dark base */
-  --color-mono-medium-dark: #1f1f1f;  /* Medium dark - AI sidebar */
-  --color-mono-medium: #353535;       /* Medium - elevated surfaces, hover states */
+  /* Primary Monochrome - Pure Black Theme */
+  --color-mono-darkest: #000000;      /* Pure black - browser panel, main backgrounds */
+  --color-mono-dark: #000000;         /* Pure black - dark base */
+  --color-mono-medium-dark: #000000;  /* Pure black - AI sidebar */
+  --color-mono-medium: #1a1a1a;       /* Very dark gray - elevated surfaces, hover states */
   --color-mono-light-medium: #d9d9d9; /* Light medium - subtle accents */
   --color-mono-light: #d1d1d1;        /* Light - secondary text */
-  --color-mono-disabled: #7b7b7b;     /* Disabled - subtle elements */
+  --color-mono-disabled: #666666;     /* Medium gray - disabled elements */
   --color-mono-white: #ffffff;        /* Pure white - primary text */
 
   /* ============================================

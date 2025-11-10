@@ -1,0 +1,57 @@
+/**
+ * WorkspaceSelector Styles
+ */
+
+.workspaceSelector {
+  flex: 1;
+}
+
+.workspaceSelector :global(.ant-select-selector) {
+  background-color: #1a1a1a !important;
+  border-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+.workspaceSelector :global(.ant-select-selector:hover) {
+  border-color: #3a3a3a !important;
+}
+
+.workspaceSelector :global(.ant-select-arrow) {
+  color: #9ca3af;
+}
+
+.workspaceDropdown {
+  background-color: #1a1a1a !important;
+}
+
+.workspaceDropdown :global(.ant-select-item) {
+  color: #ffffff;
+}
+
+.workspaceDropdown :global(.ant-select-item-option-selected) {
+  background-color: #6366f1 !important;
+}
+
+.workspaceDropdown :global(.ant-select-item-option-active) {
+  background-color: #2a2a2a !important;
+}
+
+.workspaceOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.workspaceIcon {
+  font-size: 16px;
+}
+
+.workspaceName {
+  flex: 1;
+  font-weight: 500;
+}
+
+.workspaceTabCount {
+  font-size: 12px;
+  color: #9ca3af;
+}

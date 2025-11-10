@@ -1,0 +1,78 @@
+/**
+ * FavoritesSection Styles
+ * Uses CSS design tokens for consistent theming
+ */
+
+.favoritesSection {
+  padding: 12px;
+  border-bottom: 1px solid #1a1a1a;
+  background-color: var(--color-bg-primary);
+}
+
+.favoritesList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.favoriteItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.favoriteItem:hover {
+  background-color: var(--color-interactive-hover);
+}
+
+.favoriteItem:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+.favoriteFavicon {
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.favoritePlaceholder {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.favoriteTitle {
+  flex: 1;
+  color: var(--color-text-primary);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Empty state */
+.emptyFavorites {
+  text-align: center;
+  padding: 16px;
+  color: #9ca3af;
+}
+
+.emptyIcon {
+  font-size: 24px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.emptyFavorites p {
+  margin: 0;
+  font-size: 12px;
+}

@@ -1,0 +1,1 @@
+Design artifacts will be generated in Phase 2.

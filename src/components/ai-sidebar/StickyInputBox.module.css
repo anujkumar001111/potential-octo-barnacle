@@ -1,0 +1,171 @@
+/**
+ * StickyInputBox Styles
+ * Uses CSS design tokens for consistent theming
+ */
+
+.stickyInputBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* File list preview */
+.fileListPreview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  background-color: var(--color-bg-primary);
+  border-radius: 8px;
+}
+
+.fileTag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background-color: var(--color-interactive-default);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--color-text-primary);
+}
+
+.fileName {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileRemove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.fileRemove:hover {
+  color: var(--color-error);
+}
+
+/* Input row */
+.inputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Attach button */
+.attachButton {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: var(--color-interactive-default);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.attachButton:hover:not(:disabled) {
+  background-color: var(--color-interactive-hover) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.attachButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Text area */
+.textArea {
+  flex: 1;
+  background-color: var(--color-interactive-default) !important;
+  border: 1px solid var(--color-border-standard) !important;
+  color: var(--color-text-primary) !important;
+  border-radius: 8px !important;
+  resize: none !important;
+  transition: all 0.2s ease;
+}
+
+.textArea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.textArea:hover {
+  border-color: var(--color-text-disabled) !important;
+}
+
+.textArea:focus {
+  border-color: var(--color-info) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+.textArea:global(.ant-input) {
+  background-color: var(--color-interactive-default) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Send button */
+.sendButton {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-info);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sendButton:hover:not(:disabled) {
+  background-color: var(--color-info-light) !important;
+}
+
+.sendButton:active:not(:disabled) {
+  background-color: #5b21b6 !important;
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-interactive-default) !important;
+}
+
+/* Hint text */
+.hintText {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .attachButton,
+  .sendButton {
+    width: 36px;
+    height: 36px;
+  }
+
+  .fileName {
+    max-width: 100px;
+  }
+}
+
+/* Accessibility */
+.attachButton:focus-visible,
+.sendButton:focus-visible {
+  outline: 2px solid var(--color-info);
+  outline-offset: 2px;
+}

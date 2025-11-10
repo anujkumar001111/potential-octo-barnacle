@@ -1,0 +1,73 @@
+Project: DM Agency Landing (Production-grade)
+Owner: Product Management
+Target: z.ai Fullstack build loop
+
+Objective
+- Deliver a high-converting, production-ready landing site for a digital marketing agency (B2B focus) with modern UX, performance, accessibility, SEO, analytics, and scalable code structure.
+
+Business Goals
+- Generate qualified leads with clear value proposition and trust signals.
+- Drive demo/consultation bookings via primary CTA.
+- Showcase services, case studies, and outcomes clearly.
+- Establish credibility with testimonials, logos, awards, and certifications.
+
+Primary Audience
+- Marketing leaders, founders, and e-commerce operators seeking growth via paid media, SEO, CRO, and lifecycle marketing.
+
+Core User Jobs
+- Understand what we do and how we’re different.
+- See proof (case studies, metrics, logos, testimonials).
+- Evaluate fit (services, industries, pricing ranges, process).
+- Take action (book consultation, download deck, join newsletter).
+
+Primary CTA
+- "Book a Free Growth Audit" (sticky in header and repeated across page) linking to a modal form with required fields: name, work email, company, monthly ad spend, goals. Form integrates with a mock API initially, then swap to real API later.
+
+Information Architecture
+- Header: logo, nav (Services, Case Studies, Process, Pricing, Resources), CTA button.
+- Hero: headline, subhead, trust bar, primary CTA + secondary CTA (Download Deck PDF), background subtle animated gradient.
+- Services: four cards (Paid Media, SEO, CRO, Lifecycle/CRM) with brief value bullets.
+- Case Studies: carousel/grid with metrics (ROAS, CPA, AOV, Revenue).
+- Process: 4-step timeline (Discover → Strategize → Execute → Optimize) with icons.
+- Social Proof: client logos (6–8), testimonials slider (3–5 quotes), ratings badges.
+- Pricing: value-based tiers (Starter, Growth, Scale) with indicative ranges; contact for custom.
+- Resources: latest 3 blog posts (mock), newsletter signup.
+- Contact/CTA Band: repeated primary CTA, one-liner value reminder.
+- Footer: links, socials, legal, contact, newsletter form, copyright.
+
+Functional Requirements
+- Responsive layout with breakpoints: 320, 375, 768, 1024, 1280, 1536+.
+- Accessible (WCAG 2.1 AA): semantic HTML, skip link, focus states, contrast, ARIA labels, form validation with messages, keyboard navigable.
+- Performance budget: Lighthouse Performance ≥ 95 on fast 3G/4x CPU, ship < 100KB critical CSS/JS initially (before images/fonts), lazy-load non-critical assets.
+- SEO: correct <title>, meta description, Open Graph, Twitter cards, JSON-LD org schema, sitemap, robots; clean URLs, structured headings.
+- Analytics: data-layer hooks for key events (nav click, CTA click, form submit, carousel interaction) with a minimal analytics adapter and console logging for now.
+- Animations: subtle, GPU-accelerated, reduced-motion support via media query, avoid layout thrash.
+- Forms: frontend validation, async submit to mock API, success/failure states, loading indicators, accessibility announcements.
+- Assets: optimized images (WebP/AVIF fallbacks), SVG icons, font loading strategy (swap), dark mode support (prefers-color-scheme + toggle).
+- Modularity: componentized sections, reusable UI primitives (Button, Card, Badge, Modal, Input), CSS variables/tokens and utility classes.
+
+Technical Guidance
+- Use z.ai fullstack to scaffold: routes, components, styles, and minimal API endpoints.
+- Create a single-page route for landing with modular sections; add mock endpoints: /api/lead, /api/newsletter, /api/posts.
+- Add a lightweight design system (tokens: colors, spacing, typography, radii, shadows) and utility classes.
+- Ensure images lazy-load with decoding="async" and loading="lazy"; use <picture> for responsive.
+- Implement analytics util with simple queue + console transport; ensure event schema consistency.
+- Include E2E happy path in preview: open modal, validate, submit, success UI.
+
+Acceptance Criteria (summary)
+- Lighthouse: Performance ≥ 95, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 95.
+- Accessibility: WCAG AA for key flows; keyboard and screen reader friendly.
+- Responsiveness: clean across defined breakpoints; no horizontal scroll.
+- SEO/Meta: complete head tags and JSON-LD.
+- Analytics: event hooks in key interactions.
+- Code Quality: modular, typed where applicable, documented, no dead code, tree-shakeable.
+
+First Build Iteration – Scope
+- Scaffold layout, header, hero, services, social proof logos, CTA modal with working mock submit, footer.
+- Add design tokens, buttons, inputs, modal, card components.
+- Wire analytics events for nav click, CTA open, form submit.
+- Implement base SEO/meta and JSON-LD.
+- Ship responsive and accessible base with reduced-motion support.
+
+Next PM Prompt (hand-off)
+- See file prompts/02_iteration_prompt.txt to continue the loop.

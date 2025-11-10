@@ -1,0 +1,46 @@
+OSINT Dossier: Niharika — Company: Broomees
+
+Summary
+- Subject appears to be “Niharika Jain” / “Niharika Jain Agrawal,” publicly associated with Broomees (also styled as Broomees India). Multiple sources indicate co-founder/leadership responsibilities spanning marketing, customer experience, and strategy. Public presence shows significant reach (tens of thousands of followers on LinkedIn). Confidence is moderate-to-high for core identity and Broomees leadership linkage; medium for granular dates due to partial visibility.
+
+Identifiers
+- Names and aliases: “Niharika Jain”, “Niharika Jain Agrawal” (likely married name); occasionally referenced simply as “Niharika” in Broomees contexts.
+- Company: Broomees (broomees.com) — domestic help staffing/managed services in India.
+- Location: Delhi NCR / India (from professional profile context).
+- Education: Public references to Indian School of Business (ISB) appear in professional profiles.
+- Public scale: ~27K followers on LinkedIn profile snapshot (magnitude-level only; exact value changes over time).
+
+Employment
+- Role: Co-founder / leadership at Broomees.
+- Scope: Marketing, Customer Experience, and Strategy leadership cited across public sources.
+- Tenure: Broomees founded circa 2020 (domain created 2020-05-22; corroborated by press/blog narratives). Precise personal start date not explicitly confirmed in open snippets; assumed from founding to present.
+
+Social/Technical Footprint
+- Professional: LinkedIn profile under “Niharika Jain Agrawal” associated with Broomees India; high follower count; About section references leadership in marketing/CX/strategy.
+- Company presence: Broomees official website and blog content referencing Niharika among founding team members alongside Vaibhav Agrawal and Saurav Kumar.
+- Developer/technical: No strong direct GitHub/Stack Overflow presence tied to Broomees identified from preliminary notes; technical footprint appears non-engineering heavy; role is business/marketing-focused. Continue monitoring for commits or org mentions tying “Broomees” + “Niharika”.
+- Social/community: Public X/Twitter content may be restricted behind login; consider Facebook/Instagram mentions related to Broomees campaigns and events.
+
+Media Mentions
+- Company blog/interview explicitly names “Niharika Jain” with co-founders; discusses Broomees origin, domestic help market challenges, profitability, and funding trajectory. Other media likely include startup features and funding news; specifics require deeper article extraction.
+
+Timeline (Broomees-specific)
+- 2020-05: broomees.com created; early-stage formation period.
+- 2020–2021: Public narratives indicate early traction and seed/angel interest.
+- 2022–2024: Scaling, brand visibility, and hiring expansion; Niharika serves leadership across marketing/CX/strategy. Further milestones pending article-by-article validation.
+
+Source List (representative)
+- LinkedIn profile: “Niharika Jain Agrawal” — association with Broomees India, follower scale, role scope (exact URL redacted here; search: LinkedIn + name + Broomees).
+- Broomees official blog/interview naming founders (search: Broomees blog founders interview Vaibhav Agrawal Niharika Jain Saurav Kumar).
+- WHOIS records for broomees.com (GoDaddy registrar; created 2020-05-22; privacy-protected registrant).
+- Assorted press/features on Broomees (funding, operations) to corroborate timeline.
+
+Confidence / Limitations
+- Confidence: High for identity linkage between “Niharika Jain (Agrawal)” and Broomees leadership; Medium for exact titles and dates; Low-to-medium for comprehensive social footprint without credentialed access to private platforms.
+- Limitations: Some platforms require login (e.g., X/Twitter). Publication dates and follower counts fluctuate. Founder details should be cross-verified with company press kit or recent interviews for latest roles and spelling of the surname (Agrawal/Agarwal variants).
+
+Next Steps (optional)
+- Extract exact titles/dates from LinkedIn Experience section and company press kit.
+- Enumerate additional identifiers (official email pattern at broomees.com; PR contact).
+- Expand media corpus: scrape and summarize top 10 news/feature articles mentioning “Niharika” + “Broomees”.
+- Visuals: Build a simple timeline chart of key milestones and a relationship map of founders and teams for improved clarity.

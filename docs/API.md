@@ -2,6 +2,13 @@
 
 This document describes the available APIs in Manus Electron for developers and advanced users.
 
+## Documentation Index
+
+- **[Component API Reference](./COMPONENT_API.md)** - Complete API reference for UI components (agent plan, chat, layout)
+- **[IPC API Reference](#window-api)** - Main process communication APIs (below)
+- **[Task Management API](#task-management-apis)** - Task execution and history APIs
+- **[Configuration API](#configuration-apis)** - User settings and preferences
+
 ## Architecture Overview
 
 ### IPC Handler Registration

@@ -1,0 +1,1 @@
+Prompt: Break down this component into tasks using the task-breakdown-template.md with sequence/dependencies.

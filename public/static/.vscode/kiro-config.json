@@ -1,0 +1,11 @@
+{
+  "specValidationGate": true,
+  "requiredTemplates": [
+    "requirements-template.md",
+    "architecture-template.md",
+    "component-spec-template.md",
+    "user-story-template.md",
+    "decision-log-template.md",
+    "task-breakdown-template.md"
+  ]
+}

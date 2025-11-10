@@ -1,7 +1,7 @@
 {
   "name": "ai-browser",
   "version": "0.0.7",
-  "description": "Manus - AI-Powered Intelligent Browser",
+  "description": "Loᥫ᭡li - AI-Powered Intelligent Browser",
   "author": "Shuai Liu <lsustc@mail.ustc.edu.cn>",
   "private": true,
   "scripts": {
@@ -46,6 +46,7 @@
     "i18next": "^25.6.0",
     "i18next-browser-languagedetector": "^8.2.0",
     "json-schema": "^0.4.0",
+    "lucide-react": "^0.553.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.45.0",
     "next": "15.4.1",
     "react": "19.1.0",

@@ -25,7 +25,7 @@ export function createTray(mainWindow: BrowserWindow): Tray {
   tray = new Tray(icon.resize({ width: 16, height: 16 }));
 
   // Set tray tooltip text
-  tray.setToolTip('DeepFundAI Browser');
+  tray.setToolTip('Loᥫ᭡li');
 
   // Create tray menu
   updateTrayMenu(mainWindow);
@@ -61,7 +61,7 @@ export function updateTrayMenu(mainWindow: BrowserWindow): void {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'DeepFundAI Browser',
+      label: 'Loᥫ᭡li',
       enabled: false,
     },
     {

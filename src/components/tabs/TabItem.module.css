@@ -1,0 +1,154 @@
+/**
+ * TabItem Styles
+ */
+
+.tabItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  position: relative;
+  min-height: 40px;
+}
+
+.tabItem:hover {
+  background-color: #1a1a1a;
+  border-color: #2a2a2a;
+}
+
+.tabItem.active {
+  background-color: #6366f1;
+  border-color: #7c3aed;
+}
+
+.tabItem.active .tabTitle {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.tabItem.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.tabItem.dragOver {
+  border-top: 2px solid #6366f1;
+}
+
+.tabItem.pinned {
+  background-color: #1a1a1a;
+}
+
+.tabItem:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Favicon */
+.tabFavicon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faviconPlaceholder {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Title */
+.tabTitle {
+  flex: 1;
+  color: #ffffff;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.tabItem:not(.active) .tabTitle {
+  color: #9ca3af;
+}
+
+/* Actions */
+.tabActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tabItem:hover .tabActions,
+.tabItem:focus-within .tabActions,
+.tabItem.active .tabActions {
+  opacity: 1;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.actionButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.actionButton:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.actionButton:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Pin icon */
+.pinIcon {
+  font-size: 12px;
+}
+
+.pinIconFilled {
+  font-size: 12px;
+  color: #fbbf24;
+}
+
+/* Pinned badge */
+.pinnedBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  background-color: #fbbf24;
+  border-radius: 50%;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .tabItem,
+  .tabActions,
+  .actionButton {
+    transition: none;
+  }
+}
