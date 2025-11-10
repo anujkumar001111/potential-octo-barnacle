@@ -20,6 +20,9 @@ import { loadPersistedLayout, createDebouncedPersist, clampPanelSize } from '@/u
 import { calculateDetailViewBounds } from '@/utils/detail-view-bounds';
 import { PanelLayoutState } from '@/type';
 import { useLayoutMode } from '@/hooks/useLayoutMode';
+import { useEkoEvents } from '@/hooks/useEkoEvents';
+import { useWindowApi } from '@/hooks/useWindowApi';
+import { useEkoStreamHandler } from '@/hooks/useEkoStreamHandler';
 // Resize handle styles are now in globals.css
 
 
@@ -151,25 +154,29 @@ export default function Main() {
         }
     }, [isTaskDetailMode]);
 
+    // Use window API hook for type-safe access to Electron APIs
+    const { getCurrentUrl, onUrlChange } = useWindowApi();
+
     // Get current URL and monitor URL changes on initialization
     useEffect(() => {
         const initUrl = async () => {
-            if (window.api && (window.api as any).getCurrentUrl) {
-                const url = await (window.api as any).getCurrentUrl();
-                setCurrentUrl(url);
-            }
+            const url = await getCurrentUrl();
+            setCurrentUrl(url);
         };
 
         // Monitor URL changes
-        if (window.api && (window.api as any).onUrlChange) {
-            (window.api as any).onUrlChange((url: string) => {
-                setCurrentUrl(url);
-                console.log('URL changed:', url);
-            });
-        }
+        const unsubscribe = onUrlChange((url: string) => {
+            setCurrentUrl(url);
+            console.log('URL changed:', url);
+        });
 
         initUrl();
-    }, []);
+
+        // Cleanup URL change listener
+        return () => {
+            unsubscribe();
+        };
+    }, [getCurrentUrl, onUrlChange]);
 
     // Handle implicit message passing from home page
     useEffect(() => {
@@ -197,113 +204,14 @@ export default function Main() {
         }
     }, [selectedHistoryTask]);
 
-    // Monitor open history panel event (click "Execution History" from scheduled task list)
-    useEffect(() => {
-        if (!isTaskDetailMode || !window.api) return;
-
-        const handleOpenHistoryPanel = (event: any) => {
-            console.log('[Main] Received open history panel event:', event);
-
-            // Use Zustand to open history panel
-            const { setShowHistoryPanel } = useHistoryStore.getState();
-            setShowHistoryPanel(true);
-        };
-
-        // Monitor open history panel event
-        if ((window.api as any).onOpenHistoryPanel) {
-            (window.api as any).onOpenHistoryPanel(handleOpenHistoryPanel);
-        }
-
-        return () => {
-            if (window.api && (window.api as any).removeAllListeners) {
-                (window.api as any).removeAllListeners('open-history-panel');
-            }
-        };
-    }, [isTaskDetailMode]);
-
-    // Monitor task aborted by system event, update task status to IndexedDB
-    useEffect(() => {
-        if (!window.api) return;
-
-        const handleTaskAbortedBySystem = async (event: any) => {
-            const { taskId, reason, timestamp } = event;
-
-            console.log(`[Main] Task aborted by system: ${taskId}, reason: ${reason}`);
-
-            try {
-                // Update task status to abort
-                updateTask(taskId, {
-                    status: 'abort',
-                    endTime: new Date(timestamp),
-                });
-
-                antdMessage.warning(t('task_terminated_with_reason', { reason }));
-            } catch (error) {
-                console.error('[Main] Failed to update aborted task status:', error);
-            }
-        };
-
-        // Monitor task aborted by system event
-        if ((window.api as any).onTaskAbortedBySystem) {
-            (window.api as any).onTaskAbortedBySystem(handleTaskAbortedBySystem);
-        }
-
-        return () => {
-            if (window.api && (window.api as any).removeAllListeners) {
-                (window.api as any).removeAllListeners('task-aborted-by-system');
-            }
-        };
-    }, [updateTask]);
-
-    // Monitor scheduled task execution completion event, update task end time and scheduled task configuration
-    useEffect(() => {
-        if (!isTaskDetailMode || !window.api) return;
-
-        const handleTaskExecutionComplete = async (event: any) => {
-            const { taskId, executionId, status, endTime } = event;
-
-            try {
-                const endTimeDate = endTime ? new Date(endTime) : new Date();
-
-                // Update current task's end time and duration (automatically saved via useTaskManager)
-                if (taskIdRef.current) {
-                    const currentTask = tasks.find(t => t.id === taskIdRef.current);
-                    const startTime = currentTask?.startTime || currentTask?.createdAt;
-
-                    updateTask(taskIdRef.current, {
-                        endTime: endTimeDate,
-                        duration: startTime ? endTimeDate.getTime() - startTime.getTime() : undefined,
-                        status: status as any,
-                    });
-                }
-
-                // Update scheduled task configuration's lastExecutedAt field
-                const scheduledTaskId = scheduledTaskIdFromUrl || taskId;
-                if (scheduledTaskId) {
-                    await scheduledTaskStorage.updateScheduledTask(scheduledTaskId, {
-                        lastExecutedAt: endTimeDate
-                    });
-                    console.log(`[Main] Scheduled task configuration updated lastExecutedAt: ${scheduledTaskId}`);
-                }
-
-                antdMessage.success(t('task_execution_completed'));
-            } catch (error) {
-                console.error('[Main] Failed to update task completion status:', error);
-                antdMessage.error(t('failed_update_task_status'));
-            }
-        };
-
-        // Monitor task execution completion event
-        if ((window.api as any).onTaskExecutionComplete) {
-            (window.api as any).onTaskExecutionComplete(handleTaskExecutionComplete);
-        }
-
-        return () => {
-            if (window.api && (window.api as any).removeAllListeners) {
-                (window.api as any).removeAllListeners('task-execution-complete');
-            }
-        };
-    }, [isTaskDetailMode, tasks, updateTask, scheduledTaskIdFromUrl]);
+    // Use centralized event handling hook for IPC events
+    useEkoEvents({
+        isTaskDetailMode,
+        tasks,
+        updateTask,
+        scheduledTaskIdFromUrl,
+        taskIdRef,
+    });
 
     // Generic function to terminate current task
     const terminateCurrentTask = useCallback(async (reason: string = 'User manually terminated') => {
@@ -362,113 +270,6 @@ export default function Main() {
             setTimeout(() => scrollToBottom(), 50); // Slight delay to ensure DOM updates
         }
     }, [messages, isAtBottom, isUserScrolling]);
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            // Handle sending message logic
-            console.log('Sending message');
-            sendMessage(query);
-        }
-    };
-
-    const callback = {
-        onMessage: (message: StreamCallbackMessage) => {
-            console.log('Processing stream message:', message);
-
-            // Do not process new messages in history mode
-            if (isHistoryMode) return;
-
-            // Use message processor to handle stream messages
-            const updatedMessages = messageProcessorRef.current.processStreamMessage(message);
-            console.log('Updated message list:', updatedMessages);
-
-            // Handle task ID replacement: temporary task -> real task
-            const isCurrentTaskTemporary = taskIdRef.current?.startsWith('temp-');
-            const hasRealTaskId = message.taskId && !message.taskId.startsWith('temp-');
-
-            if (isCurrentTaskTemporary && hasRealTaskId) {
-                const tempTaskId = taskIdRef.current;
-                const realTaskId = message.taskId;
-
-                console.log(`Replacing temporary task ${tempTaskId} with real task ${realTaskId}`);
-
-                // Replace task ID
-                replaceTaskId(tempTaskId, realTaskId);
-
-                // Update taskIdRef
-                taskIdRef.current = realTaskId;
-
-                // Update task with new workflow info if available
-                if (message.type === 'workflow' && message.workflow?.name) {
-                    updateTask(realTaskId, {
-                        name: message.workflow.name,
-                        workflow: message.workflow,
-                        messages: updatedMessages
-                    });
-                } else {
-                    updateTask(realTaskId, { messages: updatedMessages });
-                }
-
-                return; // Exit early, task ID has been replaced
-            }
-
-            // Set task ID (if not already set and not temporary)
-            if (message.taskId && !currentTaskId && !message.taskId.startsWith('temp-')) {
-                setCurrentTaskId(message.taskId);
-            }
-
-            // Update or create task
-            const taskIdToUpdate = message.taskId || taskIdRef.current;
-            if (taskIdToUpdate) {
-                const updates: Partial<Task> = {
-                    messages: updatedMessages
-                };
-
-                if (message.type === 'workflow' && message.workflow?.name) {
-                    updates.name = message.workflow.name;
-                    updates.workflow = message.workflow;
-                }
-
-                // For error messages, also update task status
-                if (message.type === 'error') {
-                    updates.status = 'error';
-                }
-
-                // Always update task (will only work if task exists)
-                updateTask(taskIdToUpdate, updates);
-            }
-
-            // Detect tool call messages, automatically show detail panel
-            if (message.type.includes('tool')) {
-                const toolName = (message as any).toolName || 'Unknown tool';
-                const operation = getToolOperation(message);
-                const status = getToolStatus(message.type);
-
-                setCurrentTool({
-                    toolName,
-                    operation,
-                    status
-                });
-                // Show detail panel when Browser or File agents execute tools
-                if (DETAIL_PANEL_AGENTS.includes(message.agentName as any)) {
-                    setShowDetail(true);
-                }
-
-                // Take screenshot when tool call completes
-                if (message.type === 'tool_result') {
-                    handleToolComplete({
-                        type: 'tool',
-                        id: message.toolId,
-                        toolName: message.toolName,
-                        status: 'completed',
-                        timestamp: new Date(),
-                        agentName: message.agentName
-                    });
-                }
-            }
-        },
-    }
 
     // Get tool operation description
     const getToolOperation = (message: StreamCallbackMessage): string => {
@@ -533,6 +334,35 @@ export default function Main() {
         } catch (error) {
             console.error('Screenshot failed:', error);
         }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            // Handle sending message logic
+            console.log('Sending message');
+            sendMessage(query);
+        }
+    };
+
+    // Use stream handler hook for message processing
+    const { onMessage } = useEkoStreamHandler({
+        isHistoryMode,
+        messageProcessorRef,
+        taskIdRef,
+        currentTaskId,
+        setCurrentTaskId,
+        replaceTaskId,
+        updateTask,
+        setCurrentTool,
+        setShowDetail,
+        handleToolComplete,
+        getToolOperation,
+        getToolStatus,
+    });
+
+    const callback = {
+        onMessage,
     };
 
     // Handle tool call click, show historical screenshot
