@@ -88,34 +88,37 @@ export const EnhancedRightAISidebar: React.FC<EnhancedRightAISidebarProps> = ({
         />
       </div>
 
-      {/* Conversation Area (scrollable) */}
-      <div
-        ref={conversationContainerRef}
-        className={styles.conversationContainer}
-        onScroll={handleScroll}
-        role="log"
-        aria-label="Conversation messages"
-      >
-        <ConversationArea
-          messages={messages}
-          isLoading={isLoading}
-        />
-        <div ref={conversationEndRef} />
-      </div>
+      {/* Main scrollable wrapper containing conversation and input */}
+      <div className={styles.mainWrapper}>
+        {/* Conversation Area (scrollable) */}
+        <div
+          ref={conversationContainerRef}
+          className={styles.conversationContainer}
+          onScroll={handleScroll}
+          role="log"
+          aria-label="Conversation messages"
+        >
+          <ConversationArea
+            messages={messages}
+            isLoading={isLoading}
+          />
+          <div ref={conversationEndRef} />
+        </div>
 
-      {/* Suggestion Chips - Between scroll and input */}
-      <div className={styles.suggestionsContainer}>
-        <SuggestionChips
-          onSuggestionClick={onSuggestionClick}
-        />
-      </div>
+        {/* Suggestion Chips - Sticky between scroll and input */}
+        <div className={styles.suggestionsContainer}>
+          <SuggestionChips
+            onSuggestionClick={onSuggestionClick}
+          />
+        </div>
 
-      {/* Sticky Input Box - Always visible at bottom */}
-      <div className={styles.inputContainer}>
-        <StickyInputBox
-          onSendMessage={onSendMessage}
-          isLoading={isLoading}
-        />
+        {/* Sticky Input Box - Always visible at bottom */}
+        <div className={styles.inputContainer}>
+          <StickyInputBox
+            onSendMessage={onSendMessage}
+            isLoading={isLoading}
+          />
+        </div>
       </div>
 
       {/* Scroll to bottom button (shows when not at bottom) */}

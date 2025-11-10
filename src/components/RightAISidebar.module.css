@@ -6,6 +6,7 @@
  * - Proper sticky positioning for header and input
  * - Enhanced UX with visual feedback
  * - Optimized spacing and interactions
+ * - Fixed sticky input box that never gets pushed out of view
  */
 
 .rightAISidebar {
@@ -33,11 +34,21 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* ============================================
+   MAIN WRAPPER - Contains scrollable content
+   ============================================ */
+.mainWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
 /* Conversation Container (scrollable area) */
 .conversationContainer {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
   min-height: 0;
   padding: 16px;
   scroll-behavior: smooth;
@@ -162,7 +173,8 @@
 @media (prefers-reduced-motion: reduce) {
   .sidebarHeader,
   .inputContainer,
-  .scrollToBottomButton {
+  .scrollToBottomButton,
+  .mainWrapper {
     transition: none;
   }
 
