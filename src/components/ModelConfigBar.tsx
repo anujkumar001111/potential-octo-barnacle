@@ -148,17 +148,18 @@ export const ModelConfigBar: React.FC = () => {
 
     setIsFetchingModels(true);
     try {
-      // Remove trailing slashes and /v1 if present, then add /v1/models
-      const cleanBaseURL = baseURL.replace(/\/+$/, '').replace(/\/v1$/, '');
-      const modelsUrl = `${cleanBaseURL}/v1/models`;
+      console.log(`Fetching models from: ${baseURL}`);
 
-      console.log(`Fetching models from: ${modelsUrl}`);
-
-      const response = await fetch(modelsUrl, {
+      // Use Next.js API endpoint as a proxy to avoid CORS issues
+      const response = await fetch('/api/config/models', {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          baseURL,
+          apiKey,
+        }),
       });
 
       if (!response.ok) {
@@ -171,8 +172,12 @@ export const ModelConfigBar: React.FC = () => {
       if (data.data && Array.isArray(data.data)) {
         const modelIds = data.data.map((model: any) => model.id);
         setAvailableModels(modelIds);
-        console.log(`Fetched ${modelIds.length} models from ${modelsUrl}:`, modelIds);
+        console.log(`Fetched ${modelIds.length} models:`, modelIds);
         message.success(`Loaded ${modelIds.length} models from API`);
+      } else if (data.error) {
+        console.warn(`API error: ${data.error}`);
+        message.warning(`Could not fetch models: ${data.error}`);
+        setAvailableModels([]);
       } else {
         console.warn('Unexpected response format from /v1/models endpoint');
         setAvailableModels([]);
