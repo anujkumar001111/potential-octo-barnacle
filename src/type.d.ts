@@ -133,6 +133,97 @@ export interface ProviderModelConfig {
   enabled: boolean
 }
 
+// ✅ NEW: Checkpoint system types for pause/resume capability
+export interface CheckpointStatus {
+  exists: boolean
+  status?: 'in_progress' | 'paused' | 'failed' | 'completed'
+  iteration?: number
+  failurePoint?: string
+  timestamp?: number
+}
+
+export interface CheckpointRecoverySummary {
+  canRecover: boolean
+  progress: number
+  lastNode: string
+  failureReason?: string
+  estimatedTokensSaved: number
+}
+
+export interface CheckpointInfo {
+  taskId: string
+  status: string
+  timestamp: number
+  iteration: number
+  totalIterations: number
+  progress: number
+}
+
+// ✅ NEW: Phase 2 Agent Context Manager types for multi-agent coordination
+export interface AgentContextState {
+  agentName: string
+  timestamp: number
+  variables: Record<string, any>
+  sessionState?: {
+    cookies?: string[]
+    headers?: Record<string, string>
+    auth?: Record<string, any>
+  }
+}
+
+export interface ContextTransfer {
+  fromAgent: string
+  toAgent: string
+  timestamp: number
+  context: Record<string, any>
+  variables: Record<string, any>
+  handoffReason?: string
+}
+
+export interface WindowContextSnapshot {
+  windowId: number
+  contextId: string
+  createdAt: number
+  updatedAt: number
+  globalVariables: Record<string, any>
+  agentStates: Record<string, AgentContextState>
+  contextTransfers: ContextTransfer[]
+}
+
+// ✅ NEW: Phase 3 MCP Integration types for dynamic tool discovery
+export interface MCPServer {
+  id: string
+  name: string
+  url: string
+  enabled: boolean
+  connectionType: 'sse' | 'stdio' | 'websocket'
+  timeout: number
+  maxRetries: number
+}
+
+export interface MCPToolInfo {
+  name: string
+  description: string
+  serverId: string
+  serverName: string
+  inputSchema: {
+    type: string
+    properties: Record<string, any>
+    required: string[]
+  }
+  enabled: boolean
+  lastDiscovered: number
+}
+
+export interface MCPClientStatus {
+  serverId: string
+  serverName: string
+  isConnected: boolean
+  lastConnected: number
+  lastError?: string
+  toolCount: number
+}
+
 // Namespaced API interfaces for better organization and maintainability
 interface EkoAPI {
   run: (prompt: string) => Promise<EkoTaskResult>
@@ -141,6 +232,43 @@ interface EkoAPI {
   getTaskStatus: (taskId: string) => Promise<EkoTaskStatus>
   cancelTask: (taskId: string) => Promise<EkoTaskResult>
   onStreamMessage: (callback: (message: EkoStreamMessage) => void) => void
+
+  // ✅ NEW: Checkpoint-aware execution for pause/resume
+  ekoRunCheckpoint: (prompt: string, options?: { checkpointInterval?: number; agents?: string[] }) => Promise<{ id: string; promise: Promise<any> }>
+  ekoPauseTask: (taskId: string) => Promise<{ success: boolean; message: string }>
+  ekoResumeTask: (taskId: string) => Promise<{ id: string; promise: Promise<any> }>
+  ekoCheckpointStatus: (taskId: string) => Promise<{ status: CheckpointStatus; summary: CheckpointRecoverySummary | null }>
+  ekoListCheckpoints: () => Promise<CheckpointInfo[]>
+  ekoDeleteCheckpoint: (taskId: string) => Promise<{ success: boolean; message: string }>
+  onEkoStreamMessage: (callback: (event: any, message: any) => void) => void
+
+  // ✅ NEW: Phase 2 Agent Context Manager APIs for multi-agent coordination
+  agentContextSaveState: (windowId: number, agentName: string, variables: Record<string, any>, sessionState?: any) => Promise<{ success: boolean; agentState?: AgentContextState }>
+  agentContextGetState: (windowId: number, agentName: string) => Promise<{ success: boolean; agentState: AgentContextState | null }>
+  agentContextTransfer: (windowId: number, fromAgent: string, toAgent: string, contextData: Record<string, any>, reason?: string) => Promise<{ success: boolean; transfer?: ContextTransfer }>
+  agentContextSetGlobalVar: (windowId: number, key: string, value: any) => Promise<{ success: boolean }>
+  agentContextGetGlobalVar: (windowId: number, key: string) => Promise<{ success: boolean; value: any }>
+  agentContextGetAgentVariables: (windowId: number, agentName: string) => Promise<{ success: boolean; variables: Record<string, any> }>
+  agentContextGetTransferHistory: (windowId: number, fromAgent?: string, toAgent?: string) => Promise<{ success: boolean; history: ContextTransfer[] }>
+  agentContextGetAllStates: (windowId: number) => Promise<{ success: boolean; states: Record<string, AgentContextState> }>
+  agentContextExport: (windowId: number) => Promise<{ success: boolean; context: WindowContextSnapshot | null }>
+  agentContextImport: (windowId: number, data: Record<string, any>) => Promise<{ success: boolean; context?: WindowContextSnapshot }>
+  agentContextClear: (windowId: number) => Promise<{ success: boolean }>
+
+  // ✅ NEW: Phase 3 MCP Tool Discovery and Execution APIs
+  mcpRegisterServer: (server: MCPServer) => Promise<{ success: boolean; error?: string }>
+  mcpUnregisterServer: (serverId: string) => Promise<{ success: boolean; error?: string }>
+  mcpGetServers: () => Promise<{ success: boolean; servers?: MCPServer[]; error?: string }>
+  mcpGetServer: (serverId: string) => Promise<{ success: boolean; server?: MCPServer; error?: string }>
+  mcpConnectServer: (serverId: string) => Promise<{ success: boolean; error?: string }>
+  mcpDisconnectServer: (serverId: string) => Promise<{ success: boolean; error?: string }>
+  mcpGetAvailableTools: () => Promise<{ success: boolean; tools?: MCPToolInfo[]; error?: string }>
+  mcpGetServerTools: (serverId: string) => Promise<{ success: boolean; tools?: MCPToolInfo[]; error?: string }>
+  mcpSetToolEnabled: (toolId: string, enabled: boolean) => Promise<{ success: boolean; error?: string }>
+  mcpExecuteTool: (toolId: string, args: Record<string, any>) => Promise<{ success: boolean; data?: any; error?: string }>
+  mcpGetConnectionStatus: () => Promise<{ success: boolean; statuses?: MCPClientStatus[]; error?: string }>
+  mcpRefreshServerTools: (serverId: string) => Promise<{ success: boolean; toolCount?: number; error?: string }>
+  mcpHealthCheck: () => Promise<{ success: boolean; health?: { healthy: number; unhealthy: number; total: number }; error?: string }>
 }
 
 interface ViewAPI {
@@ -184,6 +312,22 @@ interface AgentAPI {
   reloadAgentConfig: () => Promise<StandardResponse<AgentConfig>>
 }
 
+interface MCPToolAPI {
+  registerServer: (server: MCPServer) => Promise<{ success: boolean; error?: string }>
+  unregisterServer: (serverId: string) => Promise<{ success: boolean; error?: string }>
+  getServers: () => Promise<{ success: boolean; servers?: MCPServer[]; error?: string }>
+  getServer: (serverId: string) => Promise<{ success: boolean; server?: MCPServer; error?: string }>
+  connectServer: (serverId: string) => Promise<{ success: boolean; error?: string }>
+  disconnectServer: (serverId: string) => Promise<{ success: boolean; error?: string }>
+  getAvailableTools: () => Promise<{ success: boolean; tools?: MCPToolInfo[]; error?: string }>
+  getServerTools: (serverId: string) => Promise<{ success: boolean; tools?: MCPToolInfo[]; error?: string }>
+  setToolEnabled: (toolId: string, enabled: boolean) => Promise<{ success: boolean; error?: string }>
+  executeTool: (toolId: string, args: Record<string, any>) => Promise<{ success: boolean; data?: any; error?: string }>
+  getConnectionStatus: () => Promise<{ success: boolean; statuses?: MCPClientStatus[]; error?: string }>
+  refreshServerTools: (serverId: string) => Promise<{ success: boolean; toolCount?: number; error?: string }>
+  healthCheck: () => Promise<{ success: boolean; health?: { healthy: number; unhealthy: number; total: number }; error?: string }>
+}
+
 interface HistoryAPI {
   showHistoryView: (screenshotBase64: string) => Promise<void>
   hideHistoryView: () => Promise<void>
@@ -212,6 +356,7 @@ declare global {
       view: ViewAPI
       config: ConfigAPI
       agent: AgentAPI
+      mcp: MCPToolAPI
       history: HistoryAPI
       voice: VoiceAPI
       util: UtilityAPI
@@ -308,6 +453,30 @@ declare global {
       onOpenHistoryPanel: (callback: (event: any) => void) => void
       /** @deprecated Use api.util.onTaskAbortedBySystem instead */
       onTaskAbortedBySystem: (callback: (event: any) => void) => void
+      /** @deprecated Use api.eko.mcpRegisterServer instead */
+      mcpRegisterServer: (server: MCPServer) => Promise<{ success: boolean; error?: string }>
+      /** @deprecated Use api.eko.mcpGetServers instead */
+      mcpGetServers: () => Promise<{ success: boolean; servers?: MCPServer[]; error?: string }>
+      /** @deprecated Use api.eko.mcpGetServer instead */
+      mcpGetServer: (serverId: string) => Promise<{ success: boolean; server?: MCPServer; error?: string }>
+      /** @deprecated Use api.eko.mcpConnectServer instead */
+      mcpConnectServer: (serverId: string) => Promise<{ success: boolean; error?: string }>
+      /** @deprecated Use api.eko.mcpDisconnectServer instead */
+      mcpDisconnectServer: (serverId: string) => Promise<{ success: boolean; error?: string }>
+      /** @deprecated Use api.eko.mcpGetAvailableTools instead */
+      mcpGetAvailableTools: () => Promise<{ success: boolean; tools?: MCPToolInfo[]; error?: string }>
+      /** @deprecated Use api.eko.mcpGetServerTools instead */
+      mcpGetServerTools: (serverId: string) => Promise<{ success: boolean; tools?: MCPToolInfo[]; error?: string }>
+      /** @deprecated Use api.eko.mcpSetToolEnabled instead */
+      mcpSetToolEnabled: (toolId: string, enabled: boolean) => Promise<{ success: boolean; error?: string }>
+      /** @deprecated Use api.eko.mcpExecuteTool instead */
+      mcpExecuteTool: (toolId: string, args: Record<string, any>) => Promise<{ success: boolean; data?: any; error?: string }>
+      /** @deprecated Use api.eko.mcpGetConnectionStatus instead */
+      mcpGetConnectionStatus: () => Promise<{ success: boolean; statuses?: MCPClientStatus[]; error?: string }>
+      /** @deprecated Use api.eko.mcpRefreshServerTools instead */
+      mcpRefreshServerTools: (serverId: string) => Promise<{ success: boolean; toolCount?: number; error?: string }>
+      /** @deprecated Use api.eko.mcpHealthCheck instead */
+      mcpHealthCheck: () => Promise<{ success: boolean; health?: { healthy: number; unhealthy: number; total: number }; error?: string }>
     }
     // PDF.js type declarations
     pdfjsLib?: {

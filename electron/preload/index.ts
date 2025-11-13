@@ -37,6 +37,22 @@ const api = {
     getTaskStatus: (taskId: string) => ipcRenderer.invoke(IPC_CHANNELS.EKO.GET_TASK_STATUS, { taskId }), // ✅ SECURITY FIX
     cancelTask: (taskId: string) => ipcRenderer.invoke(IPC_CHANNELS.EKO.CANCEL_TASK, { taskId }), // ✅ SECURITY FIX
     onStreamMessage: (callback: (message: any) => void) => ipcRenderer.on(IPC_CHANNELS.EKO.STREAM_MESSAGE, (_, message) => callback(message)),
+
+    // ✅ NEW: Checkpoint-aware execution for pause/resume
+    ekoRunCheckpoint: (prompt: string, options?: { checkpointInterval?: number; agents?: string[] }) =>
+      ipcRenderer.invoke('eko:run-checkpoint', { prompt, ...options }),
+    ekoPauseTask: (taskId: string) =>
+      ipcRenderer.invoke('eko:pause-task', { taskId }),
+    ekoResumeTask: (taskId: string) =>
+      ipcRenderer.invoke('eko:resume-task', { taskId }),
+    ekoCheckpointStatus: (taskId: string) =>
+      ipcRenderer.invoke('eko:checkpoint-status', { taskId }),
+    ekoListCheckpoints: () =>
+      ipcRenderer.invoke('eko:list-checkpoints'),
+    ekoDeleteCheckpoint: (taskId: string) =>
+      ipcRenderer.invoke('eko:delete-checkpoint', { taskId }),
+    onEkoStreamMessage: (callback: (event: any, message: any) => void) =>
+      ipcRenderer.on('eko-stream-message', callback),
   },
 
   view: {
@@ -81,6 +97,62 @@ const api = {
     getMcpTools: () => ipcRenderer.invoke(IPC_CHANNELS.AGENT.GET_MCP_TOOLS),
     setMcpToolEnabled: (toolName: string, enabled: boolean) => ipcRenderer.invoke(IPC_CHANNELS.AGENT.SET_MCP_TOOL_ENABLED, { toolName, enabled }), // ✅ SECURITY FIX: Wrap in object
     reloadAgentConfig: () => ipcRenderer.invoke(IPC_CHANNELS.AGENT.RELOAD_CONFIG),
+  },
+
+  // ✅ NEW: Phase 2 Agent Context Manager namespace for multi-agent coordination
+  agentContext: {
+    saveState: (windowId: number, agentName: string, variables: Record<string, any>, sessionState?: any) =>
+      ipcRenderer.invoke('agent-context:save-state', windowId, agentName, variables, sessionState),
+    getState: (windowId: number, agentName: string) =>
+      ipcRenderer.invoke('agent-context:get-state', windowId, agentName),
+    transferContext: (windowId: number, fromAgent: string, toAgent: string, contextData: Record<string, any>, reason?: string) =>
+      ipcRenderer.invoke('agent-context:transfer-context', windowId, fromAgent, toAgent, contextData, reason),
+    setGlobalVar: (windowId: number, key: string, value: any) =>
+      ipcRenderer.invoke('agent-context:set-global-var', windowId, key, value),
+    getGlobalVar: (windowId: number, key: string) =>
+      ipcRenderer.invoke('agent-context:get-global-var', windowId, key),
+    getAgentVariables: (windowId: number, agentName: string) =>
+      ipcRenderer.invoke('agent-context:get-agent-variables', windowId, agentName),
+    getTransferHistory: (windowId: number, fromAgent?: string, toAgent?: string) =>
+      ipcRenderer.invoke('agent-context:get-transfer-history', windowId, fromAgent, toAgent),
+    getAllStates: (windowId: number) =>
+      ipcRenderer.invoke('agent-context:get-all-states', windowId),
+    exportContext: (windowId: number) =>
+      ipcRenderer.invoke('agent-context:export-context', windowId),
+    importContext: (windowId: number, data: Record<string, any>) =>
+      ipcRenderer.invoke('agent-context:import-context', windowId, data),
+    clearContext: (windowId: number) =>
+      ipcRenderer.invoke('agent-context:clear-context', windowId),
+  },
+
+  // ✅ NEW: Phase 3 MCP Tool API namespace for dynamic tool discovery
+  mcp: {
+    registerServer: (server: any) =>
+      ipcRenderer.invoke('mcp:register-server', server),
+    unregisterServer: (serverId: string) =>
+      ipcRenderer.invoke('mcp:unregister-server', serverId),
+    getServers: () =>
+      ipcRenderer.invoke('mcp:get-servers'),
+    getServer: (serverId: string) =>
+      ipcRenderer.invoke('mcp:get-server', serverId),
+    connectServer: (serverId: string) =>
+      ipcRenderer.invoke('mcp:connect-server', serverId),
+    disconnectServer: (serverId: string) =>
+      ipcRenderer.invoke('mcp:disconnect-server', serverId),
+    getAvailableTools: () =>
+      ipcRenderer.invoke('mcp:get-available-tools'),
+    getServerTools: (serverId: string) =>
+      ipcRenderer.invoke('mcp:get-server-tools', serverId),
+    setToolEnabled: (toolId: string, enabled: boolean) =>
+      ipcRenderer.invoke('mcp:set-tool-enabled', toolId, enabled),
+    executeTool: (toolId: string, args: Record<string, any>) =>
+      ipcRenderer.invoke('mcp:execute-tool', toolId, args),
+    getConnectionStatus: () =>
+      ipcRenderer.invoke('mcp:get-connection-status'),
+    refreshServerTools: (serverId: string) =>
+      ipcRenderer.invoke('mcp:refresh-server-tools', serverId),
+    healthCheck: () =>
+      ipcRenderer.invoke('mcp:health-check'),
   },
 
   history: {

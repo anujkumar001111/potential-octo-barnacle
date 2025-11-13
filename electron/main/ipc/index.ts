@@ -3,6 +3,8 @@ import { registerViewHandlers } from "./view-handlers";
 import { registerHistoryHandlers } from "./history-handlers";
 import { registerConfigHandlers } from "./config-handlers";
 import { registerAgentHandlers } from "./agent-handlers";
+import { setupAgentContextHandlers } from "./agent-context-handlers";
+import { setupMCPHandlers } from "./mcp-tools";
 
 /**
  * Register all IPC handlers
@@ -14,6 +16,8 @@ export function registerAllIpcHandlers() {
   registerHistoryHandlers();
   registerConfigHandlers();
   registerAgentHandlers();
+  setupAgentContextHandlers();
+  setupMCPHandlers();
 
   console.log('[IPC] All IPC handlers registered successfully');
 }
@@ -24,5 +28,7 @@ export {
   registerViewHandlers,
   registerHistoryHandlers,
   registerConfigHandlers,
-  registerAgentHandlers
+  registerAgentHandlers,
+  setupAgentContextHandlers,
+  setupMCPHandlers
 };
