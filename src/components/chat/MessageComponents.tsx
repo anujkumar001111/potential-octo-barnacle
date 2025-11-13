@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { Executing, Browser, Search, DataAnalysis, ExpandCollapse, DeepThinking, FinishStatus, RuningStatus, Atlas } from '../../icons/deepfundai-icons';
 import { DisplayMessage, AgentGroupMessage, ToolAction, AgentMessage } from '../../models';
 import { useTranslation } from 'react-i18next';
+import { AgentContextTransfer, ContextTransferData } from './AgentContextTransfer';
 
 const { Text } = Typography;
 
@@ -209,13 +210,29 @@ const MessageContent = ({ message, onToolClick }: { message: DisplayMessage, onT
     );
   }
 
-
   if (message.type === 'workflow') {
     return <WorkflowDisplay workflow={message.workflow} />;
   }
 
   if (message.type === 'agent_group') {
     return <AgentGroupDisplay agentMessage={message} onToolClick={onToolClick} />
+  }
+
+  // Phase 4: Agent context transfer visualization
+  if (message.type === 'context_transfer') {
+    return (
+      <AgentContextTransfer
+        transfer={{
+          fromAgent: message.fromAgent,
+          toAgent: message.toAgent,
+          timestamp: message.timestamp.getTime(),
+          context: message.context,
+          variables: message.variables,
+          handoffReason: message.handoffReason,
+          dataSize: message.dataSize,
+        }}
+      />
+    );
   }
 
   return null;

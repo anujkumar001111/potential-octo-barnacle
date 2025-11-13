@@ -55,5 +55,19 @@ export interface UserMessage {
   timestamp: Date;
 }
 
+// Agent context transfer message - Phase 4 visualization
+export interface ContextTransferMessage {
+  id: string;
+  type: 'context_transfer';
+  taskId: string;
+  fromAgent: string;
+  toAgent: string;
+  context: Record<string, any>;
+  variables: Record<string, any>;
+  handoffReason?: string;
+  dataSize?: number;
+  timestamp: Date;
+}
+
 // Display layer message union type
-export type DisplayMessage = WorkflowMessage | AgentGroupMessage | UserMessage;
+export type DisplayMessage = WorkflowMessage | AgentGroupMessage | UserMessage | ContextTransferMessage;
