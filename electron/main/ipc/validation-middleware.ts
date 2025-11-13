@@ -11,7 +11,7 @@
 import { IpcMainInvokeEvent } from 'electron';
 import { z } from 'zod';
 import log from 'electron-log';
-import { LRUCache } from '../utils/lru-cache';
+import { LRUCache, createRateLimitCache } from '../utils/lru-cache';
 
 function detectFragmentation(data: unknown): boolean {
   if (typeof data === 'string') {
@@ -186,6 +186,7 @@ export function validateIpcArgs<T extends z.ZodSchema[]>(schemas: T) {
  *
  * @param maxCalls - Maximum number of calls allowed in the time window
  * @param windowMs - Time window in milliseconds
+ * @param cacheConfig - Optional cache configuration for rate limiting
  * @returns Middleware function
  *
  * @example
@@ -197,25 +198,119 @@ export function validateIpcArgs<T extends z.ZodSchema[]>(schemas: T) {
  * );
  * ```
  */
-export function rateLimit(maxCalls: number, windowMs: number) {
-  // Use LRU cache to prevent memory leaks
-  const rateLimits = new LRUCache<number, { count: number; resetAt: number }>(1000);
+export function rateLimit(maxCalls: number, windowMs: number, cacheConfig?: { maxSize?: number }) {
+  // Use specialized rate limit cache with appropriate defaults
+  const rateLimits = createRateLimitCache({
+    maxSize: cacheConfig?.maxSize ?? 1000,
+    cleanupIntervalMs: 60 * 1000, // Clean up every minute
+    maxAgeMs: windowMs * 2 // Keep entries for 2x the window duration
+  });
 
   return function(handler: (event: IpcMainInvokeEvent, ...args: any[]) => Promise<any>) {
     return async (event: IpcMainInvokeEvent, ...args: any[]): Promise<any> => {
-      const senderId = event.sender.id;
+      const senderId = event.sender.id.toString(); // Convert to string for cache key
       const now = Date.now();
       const limit = rateLimits.get(senderId);
 
       if (limit && now < limit.resetAt) {
         if (limit.count >= maxCalls) {
+          const stats = rateLimits.getStats();
           log.warn('[Rate Limit Exceeded]', {
             senderId,
             maxCalls,
             windowMs,
             currentCount: limit.count,
             resetAt: limit.resetAt,
-            cacheSize: rateLimits.size()
+            timeUntilReset: limit.resetAt - now,
+            cacheStats: {
+              size: stats.size,
+              maxSize: stats.maxSize,
+              hitRate: stats.hitRate,
+              evictionCount: stats.evictionCount
+            }
+          });
+
+          throw new Error('Rate limit exceeded. Please try again later.');
+        }
+        limit.count++;
+        rateLimits.set(senderId, limit);
+      } else {
+        rateLimits.set(senderId, { count: 1, resetAt: now + windowMs });
+      }
+
+      return await handler(event, ...args);
+    };
+  };
+}
+
+/**
+ * Cache monitoring and statistics utility
+ * Provides real-time cache performance metrics
+ */
+class CacheMonitor {
+  private caches: Map<string, LRUCache<any, any>> = new Map();
+
+  registerCache(name: string, cache: LRUCache<any, any>) {
+    this.caches.set(name, cache);
+  }
+
+  getAllStats() {
+    const stats: Record<string, any> = {};
+    for (const [name, cache] of this.caches.entries()) {
+      stats[name] = cache.getStats();
+    }
+    return stats;
+  }
+
+  getCacheStats(name: string) {
+    const cache = this.caches.get(name);
+    return cache ? cache.getStats() : null;
+  }
+
+  resetAllStats() {
+    for (const cache of this.caches.values()) {
+      cache.resetStats();
+    }
+  }
+}
+
+// Global cache monitor instance
+export const cacheMonitor = new CacheMonitor();
+
+// Enhanced rate limit factory that registers with monitor
+export function monitoredRateLimit(maxCalls: number, windowMs: number, cacheName?: string, cacheConfig?: { maxSize?: number }) {
+  const rateLimits = createRateLimitCache({
+    maxSize: cacheConfig?.maxSize ?? 1000,
+    cleanupIntervalMs: 60 * 1000,
+    maxAgeMs: windowMs * 2
+  });
+
+  // Register cache with monitor for observability
+  const monitorName = cacheName || `rate-limit-${Date.now()}`;
+  cacheMonitor.registerCache(monitorName, rateLimits);
+
+  return function(handler: (event: IpcMainInvokeEvent, ...args: any[]) => Promise<any>) {
+    return async (event: IpcMainInvokeEvent, ...args: any[]): Promise<any> => {
+      const senderId = event.sender.id.toString();
+      const now = Date.now();
+      const limit = rateLimits.get(senderId);
+
+      if (limit && now < limit.resetAt) {
+        if (limit.count >= maxCalls) {
+          const stats = rateLimits.getStats();
+          log.warn('[Rate Limit Exceeded]', {
+            senderId,
+            maxCalls,
+            windowMs,
+            currentCount: limit.count,
+            resetAt: limit.resetAt,
+            timeUntilReset: limit.resetAt - now,
+            cacheStats: {
+              size: stats.size,
+              maxSize: stats.maxSize,
+              hitRate: stats.hitRate,
+              evictionCount: stats.evictionCount
+            }
           });
 
           throw new Error('Rate limit exceeded. Please try again later.');

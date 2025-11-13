@@ -1,88 +1,71 @@
-  /**
-   * Get final model configuration with priority: user config > env > default
-   */
-  public getModelConfig(provider: ProviderType): ModelConfig | null {
-    const userConfigs = this.getUserModelConfigs();
+import { config } from "dotenv";
+import path from "node:path";
+import { app } from "electron";
+import fs from "fs";
+import { store } from "./store";
+// ✅ SECURITY FIX: Import encryption utilities
+import { encryptSensitiveData, decryptSensitiveData, isEncryptionAvailable } from "./encryption";
+import { SecureString } from './secure-string';
 
-    let apiKey: string;
-    let config: ModelConfig | null = null;
-
-    switch (provider) {
-      case 'deepseek':
-        apiKey = userConfigs.deepseek?.apiKey || process.env.DEEPSEEK_API_KEY || '';
-        config = {
-          provider: 'deepseek',
-          model: userConfigs.deepseek?.model || 'deepseek-chat',
-          apiKey,
-          baseURL: userConfigs.deepseek?.baseURL || process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com/v1'
-        };
-        break;
-
-      case 'qwen':
-        apiKey = userConfigs.qwen?.apiKey || process.env.QWEN_API_KEY || '';
-        config = {
-          provider: 'openai',
-          model: userConfigs.qwen?.model || 'qwen-max',
-          apiKey,
-          baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1'
-        };
-        break;
-
-      case 'google':
-        apiKey = userConfigs.google?.apiKey || process.env.GOOGLE_API_KEY || '';
-        config = {
-          provider: 'google',
-          model: userConfigs.google?.model || 'gemini-1.5-flash-latest',
-          apiKey
-        };
-        break;
-
-      case 'anthropic':
-        apiKey = userConfigs.anthropic?.apiKey || process.env.ANTHROPIC_API_KEY || '';
-        config = {
-          provider: 'anthropic',
-          model: userConfigs.anthropic?.model || 'claude-3-5-sonnet-latest',
-          apiKey
-        };
-        break;
-
-      case 'openrouter':
-        apiKey = userConfigs.openrouter?.apiKey || process.env.OPENROUTER_API_KEY || '';
-        config = {
-          provider: 'openrouter',
-          model: userConfigs.openrouter?.model || 'anthropic/claude-3.5-sonnet',
-          apiKey
-        };
-        break;
-
-      case 'custom':
-        apiKey = userConfigs.custom?.apiKey || process.env.CUSTOM_API_KEY || '';
-        config = {
-          provider: 'openai',
-          model: userConfigs.custom?.model || 'gpt-4o',
-          apiKey,
-          baseURL: userConfigs.custom?.baseURL || process.env.CUSTOM_API_URL || 'http://143.198.174.251:8317'
-        };
-        break;
-
-      default:
-        return null;
-    }
-
-    // Store in secure cache and setup zeroization
-    if (apiKey) {
-      const secureKey = new SecureString(apiKey);
-      this.apiKeyCache.set(provider, secureKey);
-
-      // Zeroize after 1 minute
-      setTimeout(() => {
-        const cachedKey = this.apiKeyCache.get(provider);
-        if (cachedKey) {
-          cachedKey.zeroize();
-          this.apiKeyCache.delete(provider);
-        }
-      }, 60000);
-    }
-
-    return config;
-  }
+/**
+ * WORKTREE CONSOLIDATION REQUIREMENTS - CONFIGURATION SECURITY
+ * ===================================================================
+ *
+ * SECURITY INTEGRATION REQUIREMENTS:
+ * IR-CONFIG-001: ConfigManager shall encrypt sensitive data before storage
+ *   - API keys (DEEPSEEK_API_KEY, QWEN_API_KEY, GOOGLE_API_KEY, etc.)
+ *   - TTS credentials (TTS_REGION, TTS_KEY)
+ *   - MCP tool authentication tokens
+ *   - Database connection strings (if any)
+ *
+ * IR-CONFIG-002: ConfigManager shall decrypt sensitive data on retrieval
+ *   - Decrypt API keys only when needed for AI service calls
+ *   - Keep decrypted keys in memory only for operation duration
+ *   - Clear decrypted keys from memory after use
+ *
+ * IR-CONFIG-003: ConfigManager shall validate encryption availability
+ *   - Check Electron safeStorage availability on initialization
+ *   - Log warnings when encryption unavailable in production
+ *   - Allow unencrypted storage only in development with explicit flag
+ *
+ * IR-CONFIG-004: ConfigManager shall implement secure key hierarchy
+ *   - User UI configuration (highest priority)
+ *   - Environment variables (.env.local/.env.production)
+ *   - Default embedded values (lowest priority)
+ *
+ * IR-CONFIG-005: ConfigManager shall prevent key leakage in logs
+ *   - Never log decrypted API keys or sensitive values
+ *   - Mask sensitive data in debug/error messages
+ *   - Use secure string representations for logging
+ *
+ * PERFORMANCE REQUIREMENTS:
+ * PR-CONFIG-001: Cache decrypted keys in memory with TTL (5 minutes)
+ * PR-CONFIG-002: Lazy decryption - only decrypt when key is accessed
+ * PR-CONFIG-003: Background encryption for configuration updates
+ * PR-CONFIG-004: Minimize encryption overhead for frequent config access
+ *
+ * RELIABILITY REQUIREMENTS:
+ * RR-CONFIG-001: Graceful degradation when encryption fails
+ * RR-CONFIG-002: Configuration migration for existing unencrypted data
+ * RR-CONFIG-003: Atomic configuration updates to prevent corruption
+ * RR-CONFIG-004: Configuration backup before encryption migration
+ *
+ * TESTING REQUIREMENTS:
+ * TR-CONFIG-001: Unit tests for encryption/decryption of config values
+ * TR-CONFIG-002: Integration tests for secure key hierarchy resolution
+ * TR-CONFIG-003: Migration tests for encrypting existing plaintext configs
+ * TR-CONFIG-004: Performance tests for configuration access patterns
+ * TR-CONFIG-005: Security tests for key leakage prevention
+ *
+ * MIGRATION REQUIREMENTS:
+ * MR-CONFIG-001: Detect and encrypt existing plaintext API keys
+ * MR-CONFIG-002: Preserve user configurations during encryption migration
+ * MR-CONFIG-003: Add configuration checksums for integrity verification
+ * MR-CONFIG-004: Implement rollback capability for failed migrations
+ *
+ * AUDIT REQUIREMENTS:
+ * AR-CONFIG-001: Log configuration access for security monitoring
+ * AR-CONFIG-002: Track configuration changes with timestamps
+ * AR-CONFIG-003: Audit encryption/decryption operations
+ * AR-CONFIG-004: Monitor for suspicious configuration access patterns
+ */
