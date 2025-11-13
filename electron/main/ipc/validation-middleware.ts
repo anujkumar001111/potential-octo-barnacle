@@ -11,6 +11,17 @@
 import { IpcMainInvokeEvent } from 'electron';
 import { z } from 'zod';
 import log from 'electron-log';
+import { LRUCache } from '../utils/lru-cache';
+
+function detectFragmentation(data: unknown): boolean {
+  if (typeof data === 'string') {
+    // Check for suspicious patterns
+    const hasRepeatedBoundaries = /(\$\{|\}\$){3,}/.test(data);
+    const hasEncodedPayload = /%[0-9A-F]{2}/.test(data);
+    return hasRepeatedBoundaries || hasEncodedPayload;
+  }
+  return false;
+}
 
 /**
  * Creates a validated IPC handler that enforces schema validation
@@ -40,6 +51,15 @@ export function validateIpc<T extends z.ZodSchema>(schema: T) {
       try {
         // Parse and validate the first argument (most IPC handlers take a single object argument)
         const rawData = rawArgs.length === 1 ? rawArgs[0] : rawArgs;
+
+        // Detect fragmentation attacks
+        if (detectFragmentation(rawData)) {
+          log.warn('[IPC Security] Potential fragmentation attack detected', {
+            senderId: event.sender.id,
+            dataType: typeof rawData
+          });
+          throw new Error('Suspicious message structure detected');
+        }
 
         const result = schema.safeParse(rawData);
 
@@ -107,6 +127,17 @@ export function validateIpcArgs<T extends z.ZodSchema[]>(schemas: T) {
       const senderId = event.sender.id;
 
       try {
+        // Detect fragmentation attacks
+        for (const arg of rawArgs) {
+          if (detectFragmentation(arg)) {
+            log.warn('[IPC Security] Potential fragmentation attack detected', {
+              senderId: event.sender.id,
+              dataType: typeof arg
+            });
+            throw new Error('Suspicious message structure detected');
+          }
+        }
+
         // Validate each argument against its corresponding schema
         if (rawArgs.length !== schemas.length) {
           throw new Error(
@@ -151,6 +182,7 @@ export function validateIpcArgs<T extends z.ZodSchema[]>(schemas: T) {
 
 /**
  * Rate limiting middleware to prevent DoS attacks
+ * Uses LRU cache to prevent memory leaks in long-running applications
  *
  * @param maxCalls - Maximum number of calls allowed in the time window
  * @param windowMs - Time window in milliseconds
@@ -166,7 +198,8 @@ export function validateIpcArgs<T extends z.ZodSchema[]>(schemas: T) {
  * ```
  */
 export function rateLimit(maxCalls: number, windowMs: number) {
-  const rateLimits = new Map<number, { count: number; resetAt: number }>();
+  // Use LRU cache to prevent memory leaks
+  const rateLimits = new LRUCache<number, { count: number; resetAt: number }>(1000);
 
   return function(handler: (event: IpcMainInvokeEvent, ...args: any[]) => Promise<any>) {
     return async (event: IpcMainInvokeEvent, ...args: any[]): Promise<any> => {
@@ -179,12 +212,16 @@ export function rateLimit(maxCalls: number, windowMs: number) {
           log.warn('[Rate Limit Exceeded]', {
             senderId,
             maxCalls,
-            windowMs
+            windowMs,
+            currentCount: limit.count,
+            resetAt: limit.resetAt,
+            cacheSize: rateLimits.size()
           });
 
           throw new Error('Rate limit exceeded. Please try again later.');
         }
         limit.count++;
+        rateLimits.set(senderId, limit);
       } else {
         rateLimits.set(senderId, { count: 1, resetAt: now + windowMs });
       }
