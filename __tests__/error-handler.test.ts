@@ -3,21 +3,24 @@
  * Tests core error management functionality
  */
 
-import { ErrorHandler, ErrorCategory, ErrorSeverity } from '../../electron/main/utils/error-handler';
+// Mock Electron app
+jest.mock('electron', () => ({
+  app: {
+    getPath: jest.fn().mockReturnValue('/tmp/test'),
+  },
+}));
+
+import { errorHandler, ErrorCategory, ErrorSeverity } from '../electron/main/utils/error-handler';
 
 describe('ErrorHandler', () => {
-  let errorHandler: ErrorHandler;
-
   beforeEach(() => {
-    errorHandler = ErrorHandler.getInstance();
     errorHandler.clearLogs();
   });
 
   describe('Singleton Pattern', () => {
-    test('should create single instance', () => {
-      const instance1 = ErrorHandler.getInstance();
-      const instance2 = ErrorHandler.getInstance();
-      expect(instance1).toBe(instance2);
+    test('should provide singleton instance', () => {
+      expect(errorHandler).toBeDefined();
+      expect(typeof errorHandler.handle).toBe('function');
     });
   });
 

@@ -1,7 +1,6 @@
 {
   "mcpServers": {
     "context7": {
-      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp"],
       "env": {
@@ -9,7 +8,6 @@
       }
     },
     "filesystem": {
-      "type": "stdio",
       "command": "npx",
       "args": [
         "-y",
@@ -18,17 +16,14 @@
       ]
     },
     "sequentialthinking": {
-      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
     "time": {
-      "type": "stdio",
       "command": "uvx",
       "args": ["mcp-server-time"]
     },
     "zen": {
-      "type": "stdio",
       "command": "/Users/roshansharma/Desktop/Vscode/deepbrowser/ai-browser/.claude/zen-mcp-server/.zen_venv/bin/python",
       "args": [
         "/Users/roshansharma/Desktop/Vscode/deepbrowser/ai-browser/.claude/zen-mcp-server/server.py"
@@ -42,11 +37,14 @@
       }
     },
     "stealth-browser": {
-      "type": "stdio",
       "command": "/Users/roshansharma/Desktop/Vscode/deepbrowser/ai-browser/.claude/stealth-browser-mcp/venv311/bin/python",
       "args": [
-        "/Users/roshansharma/Desktop/Vscode/deepbrowser/ai-browser/.claude/stealth-browser-mcp/src/server.py"
-      ]
+        "/Users/roshansharma/Desktop/Vscode/deepbrowser/ai-browser/.claude/stealth-browser-mcp/src/server.py",
+        "--minimal"
+      ],
+      "env": {
+        "PYTHONPATH": "/Users/roshansharma/Desktop/Vscode/deepbrowser/ai-browser/.claude/stealth-browser-mcp/src"
+      }
     }
   }
 }

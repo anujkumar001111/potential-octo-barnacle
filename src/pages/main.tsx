@@ -511,12 +511,48 @@ export default function Main() {
         }
     };
 
-    // EkoService stream message monitoring
+    // EkoService stream message monitoring with batch message handling
     useEffect(() => {
-        const handleEkoStreamMessage = (message: StreamCallbackMessage) => {
-            console.log('Received EkoService stream message:', message);
-            // Directly process stream messages
-            callback.onMessage(message);
+        const handleEkoStreamMessage = (data: any) => {
+            console.log('[StreamHandler] Received message:', data);
+
+            // Handle batched messages from IPC batch manager
+            if (data?.type === 'batch' && Array.isArray(data.messages)) {
+                console.log(`[StreamHandler] Processing batch with ${data.messages.length} messages`);
+                let successCount = 0;
+                let errorCount = 0;
+
+                // Process each message in the batch
+                for (let i = 0; i < data.messages.length; i++) {
+                    const batchMessage = data.messages[i];
+                    try {
+                        // Extract the actual StreamCallbackMessage from BatchMessage wrapper
+                        // BatchMessage structure: { channel, data, id, timestamp }
+                        const actualMessage = batchMessage.data || batchMessage;
+
+                        if (!actualMessage || typeof actualMessage !== 'object') {
+                            console.warn(`[StreamHandler] Message ${i} has invalid structure:`, batchMessage);
+                            errorCount++;
+                            continue;
+                        }
+
+                        const msgType = actualMessage.type || 'unknown';
+                        console.log(`[StreamHandler] Msg ${i}/${data.messages.length}: type=${msgType}, taskId=${actualMessage.taskId || 'none'}`);
+
+                        callback.onMessage(actualMessage);
+                        successCount++;
+                    } catch (error) {
+                        console.error(`[StreamHandler] Error in message ${i}:`, error);
+                        errorCount++;
+                    }
+                }
+                console.log(`[StreamHandler] Batch complete: ${successCount} processed, ${errorCount} failed`);
+            } else {
+                // Handle single messages (backward compatibility)
+                const msgType = data?.type || 'unknown';
+                console.log(`[StreamHandler] Single message: type=${msgType}`);
+                callback.onMessage(data);
+            }
         };
 
         // Monitor stream messages from main thread

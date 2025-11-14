@@ -3,26 +3,26 @@
  * Measures memory reduction, compression ratios, cache hit rates, and response times
  */
 
-import { ErrorHandler, ErrorCategory, ErrorSeverity } from '../../electron/main/utils/error-handler';
-import { MemoryManager } from '../../electron/main/utils/memory-manager';
-import { ScreenshotCacheManager } from '../../electron/main/utils/screenshot-cache';
-import { AIProviderModelCache, ModelInfo } from '../../electron/main/utils/model-cache';
+// Mock Electron app
+jest.mock('electron', () => ({
+  app: {
+    getPath: jest.fn().mockReturnValue('/tmp/test'),
+  },
+}));
+
+import { errorHandler, ErrorCategory, ErrorSeverity } from '../electron/main/utils/error-handler';
+import { memoryManager } from '../electron/main/utils/memory-manager';
+import { screenshotCache } from '../electron/main/utils/screenshot-cache';
+import { modelCache, ModelInfo } from '../electron/main/utils/model-cache';
 
 describe('Phase 3 Performance Benchmarks', () => {
-  let memoryManager: MemoryManager;
-  let screenshotCache: ScreenshotCacheManager;
-  let modelCache: AIProviderModelCache;
-
   beforeEach(() => {
-    memoryManager = new MemoryManager();
-    screenshotCache = new ScreenshotCacheManager();
-    modelCache = new AIProviderModelCache();
+    // Clear any previous state
+    errorHandler.clearLogs();
   });
 
   afterEach(async () => {
     await screenshotCache.clear();
-    screenshotCache.destroy();
-    memoryManager.destroy();
   });
 
   describe('Memory Reduction Benchmarks', () => {

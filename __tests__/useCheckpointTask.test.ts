@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach} from '@jest/globals';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useCheckpointTask } from '../src/hooks/useCheckpointTask';
 

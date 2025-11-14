@@ -2,7 +2,7 @@
 const config = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  roots: ['<rootDir>/src', '<rootDir>/__tests__'],
+  roots: ['<rootDir>/src', '<rootDir>/__tests__', '<rootDir>/electron'],
   testMatch: [
     '**/__tests__/**/*.test.ts',
     '**/__tests__/**/*.test.tsx',
@@ -14,11 +14,7 @@ const config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
-      tsconfig: {
-        jsx: 'react',
-        esModuleInterop: true,
-        allowSyntheticDefaultImports: true,
-      },
+      tsconfig: 'tsconfig.test.json',
     }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
@@ -31,6 +27,10 @@ const config = {
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '/__tests__/',
+  ],
+  // Explicitly tell jest to process electron directory
+  transformIgnorePatterns: [
+    'node_modules/(?!(@eko-ai)/)',
   ],
 };
 

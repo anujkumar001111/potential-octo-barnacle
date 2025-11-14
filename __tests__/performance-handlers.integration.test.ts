@@ -3,9 +3,9 @@
  * Tests performance handler IPC endpoints with mocked Electron ipcMain
  */
 
-import { MemoryManager } from '../../electron/main/utils/memory-manager';
-import { ScreenshotCacheManager } from '../../electron/main/utils/screenshot-cache';
-import { AIProviderModelCache } from '../../electron/main/utils/model-cache';
+import { memoryManager } from '../electron/main/utils/memory-manager';
+import { screenshotCache } from '../electron/main/utils/screenshot-cache';
+import { modelCache } from '../electron/main/utils/model-cache';
 
 // Mock Electron ipcMain
 jest.mock('electron', () => ({
@@ -15,12 +15,9 @@ jest.mock('electron', () => ({
 }));
 
 import { ipcMain } from 'electron';
-import { registerPerformanceHandlers } from '../../electron/main/ipc/performance-handlers';
+import { registerPerformanceHandlers } from '../electron/main/ipc/performance-handlers';
 
 describe('Performance IPC Handlers Integration', () => {
-  let memoryManager: MemoryManager;
-  let screenshotCache: ScreenshotCacheManager;
-  let modelCache: AIProviderModelCache;
   let mockHandlers: Map<string, Function>;
 
   beforeEach(() => {
@@ -33,19 +30,12 @@ describe('Performance IPC Handlers Integration', () => {
       mockHandlers.set(channel, handler);
     });
 
-    // Initialize managers
-    memoryManager = new MemoryManager();
-    screenshotCache = new ScreenshotCacheManager();
-    modelCache = new AIProviderModelCache();
-
     // Register handlers (in real app, these are singletons)
     registerPerformanceHandlers();
   });
 
   afterEach(async () => {
     await screenshotCache.clear();
-    screenshotCache.destroy();
-    memoryManager.destroy();
   });
 
   describe('perf:get-memory-stats', () => {

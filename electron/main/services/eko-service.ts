@@ -812,6 +812,18 @@ export class EkoService {
       id: taskId,
       promise: executionPromise,
     };
+    } catch (error: any) {
+      // Catch for the outer try block at line 694
+      this.logger.error(
+        'Failed to initialize checkpoint task',
+        error,
+        { taskId },
+        ErrorCategory.AGENT,
+        ErrorSeverity.HIGH,
+        true
+      );
+      throw error;
+    }
   }
 
   /**

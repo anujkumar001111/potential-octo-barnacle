@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach} from '@jest/globals';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AgentContextTransfer, ContextTransferData } from '../src/components/chat/AgentContextTransfer';
 

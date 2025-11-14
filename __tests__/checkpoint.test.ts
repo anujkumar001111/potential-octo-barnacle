@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach} from '@jest/globals';
 import path from 'path';
 import fs from 'fs-extra';
 import { taskCheckpointManager, type Checkpoint } from '../electron/main/services/task-checkpoint';

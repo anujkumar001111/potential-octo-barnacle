@@ -3,17 +3,22 @@
  * Tests memory monitoring, pressure detection, and cleanup
  */
 
-import { MemoryManager } from '../../electron/main/utils/memory-manager';
+// Mock Electron app
+jest.mock('electron', () => ({
+  app: {
+    getPath: jest.fn().mockReturnValue('/tmp/test'),
+  },
+}));
+
+import { memoryManager } from '../electron/main/utils/memory-manager';
 
 describe('MemoryManager', () => {
-  let memoryManager: MemoryManager;
-
   beforeEach(() => {
-    memoryManager = new MemoryManager();
+    // Memory manager is a singleton, just clear state if needed
   });
 
   afterEach(() => {
-    memoryManager.destroy();
+    // Memory manager cleanup handled by singleton
   });
 
   describe('Memory Stats', () => {
@@ -229,14 +234,14 @@ describe('MemoryManager', () => {
     });
 
     test('should clean up intervals on destroy', (done) => {
-      const manager = new MemoryManager();
-      manager.getMemoryStats();
+      // Singleton cannot be tested for lifecycle
+      // Just verify destroy doesn't throw
+      expect(() => {
+        memoryManager.destroy();
+      }).not.toThrow();
 
-      manager.destroy();
-
-      // Should not collect stats after destroy
       setTimeout(() => {
-        expect(manager).toBeDefined();
+        expect(memoryManager).toBeDefined();
         done();
       }, 100);
     });

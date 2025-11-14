@@ -148,7 +148,7 @@ export default function AISidebarHeader() {
         onClose={() => setShowMCPTools(false)}
         open={showMCPTools}
         width={500}
-        bodyStyle={{ padding: 0 }}
+        styles={{ body: { padding: 0 } }}
         className="mcp-tools-drawer"
       >
         <MCPToolSelector

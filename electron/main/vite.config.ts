@@ -38,6 +38,11 @@ export default defineConfig({
         'electron-store',
         '@remix-run/node',
         '@nut-tree/nut-js',
+        'sharp', // Native image processing library
+        'crypto', // Node.js crypto module
+        'uuid', // UUID generation library
+        '@eko-ai/eko', // Eko AI framework
+        /^@eko-ai\//, // All @eko-ai packages
 
         // "mime", // NOTE: don't enable. not working if it's external.
         'electron-updater',

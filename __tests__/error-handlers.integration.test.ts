@@ -3,7 +3,7 @@
  * Tests error handler IPC endpoints with mocked Electron ipcMain
  */
 
-import { ErrorHandler, ErrorCategory, ErrorSeverity } from '../../electron/main/utils/error-handler';
+import { errorHandler, ErrorCategory, ErrorSeverity } from '../electron/main/utils/error-handler';
 
 // Mock Electron ipcMain
 jest.mock('electron', () => ({
@@ -13,10 +13,9 @@ jest.mock('electron', () => ({
 }));
 
 import { ipcMain } from 'electron';
-import { registerErrorHandlers } from '../../electron/main/ipc/error-handlers';
+import { registerErrorHandlers } from '../electron/main/ipc/error-handlers';
 
 describe('Error IPC Handlers Integration', () => {
-  let errorHandler: ErrorHandler;
   let mockHandlers: Map<string, Function>;
 
   beforeEach(() => {
@@ -29,8 +28,7 @@ describe('Error IPC Handlers Integration', () => {
       mockHandlers.set(channel, handler);
     });
 
-    // Initialize error handler
-    errorHandler = ErrorHandler.getInstance();
+    // Clear error logs
     errorHandler.clearLogs();
 
     // Register handlers

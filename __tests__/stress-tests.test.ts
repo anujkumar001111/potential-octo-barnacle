@@ -3,25 +3,24 @@
  * Tests OOM prevention, cache effectiveness, and system resilience
  */
 
-import { MemoryManager } from '../../electron/main/utils/memory-manager';
-import { ScreenshotCacheManager } from '../../electron/main/utils/screenshot-cache';
-import { AIProviderModelCache, ModelInfo } from '../../electron/main/utils/model-cache';
+// Mock Electron app
+jest.mock('electron', () => ({
+  app: {
+    getPath: jest.fn().mockReturnValue('/tmp/test'),
+  },
+}));
+
+import { memoryManager } from '../electron/main/utils/memory-manager';
+import { screenshotCache } from '../electron/main/utils/screenshot-cache';
+import { modelCache, ModelInfo } from '../electron/main/utils/model-cache';
 
 describe('Phase 3 Stress Tests', () => {
-  let memoryManager: MemoryManager;
-  let screenshotCache: ScreenshotCacheManager;
-  let modelCache: AIProviderModelCache;
-
-  beforeEach(() => {
-    memoryManager = new MemoryManager();
-    screenshotCache = new ScreenshotCacheManager();
-    modelCache = new AIProviderModelCache();
+  beforeEach(async () => {
+    await screenshotCache.clear();
   });
 
   afterEach(async () => {
     await screenshotCache.clear();
-    screenshotCache.destroy();
-    memoryManager.destroy();
   });
 
   describe('OOM Prevention', () => {
