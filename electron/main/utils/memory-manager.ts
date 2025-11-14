@@ -15,6 +15,7 @@ import { ErrorCategory, ErrorSeverity } from './error-handler';
 import { agentContextManager } from '../services/agent-context-manager';
 import { screenshotCache } from './screenshot-cache';
 import { screenshotOptimizer } from './screenshot-optimizer';
+import v8 from 'v8';
 
 const logger = createLogger('MemoryManager');
 
@@ -56,7 +57,7 @@ export class MemoryManager {
   getMemoryStats(): MemoryStats {
     const memUsage = process.memoryUsage();
 
-    const heapLimit = require('v8').getHeapStatistics().heap_size_limit;
+    const heapLimit = v8.getHeapStatistics().heap_size_limit;
     const pressure = memUsage.heapUsed / heapLimit;
 
     const stats: MemoryStats = {
