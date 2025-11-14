@@ -34,6 +34,10 @@ import { cwd } from "node:process";
 import { registerAllIpcHandlers } from "./ipc";
 // ✅ PHASE 2: Import error handler for initialization
 import { errorHandler, ErrorCategory, ErrorSeverity } from "./utils/error-handler";
+// ✅ PHASE 3: Import performance optimization systems
+import { memoryManager } from "./utils/memory-manager";
+import { screenshotCache } from "./utils/screenshot-cache";
+import { initializeModelCache } from "./utils/model-cache";
 
 /**
  * Validate and adjust bounds to ensure they're within window constraints
@@ -395,6 +399,12 @@ async function initializeMainWindow(): Promise<BrowserWindow> {
   // Register all IPC handlers FIRST (before creating windows)
   registerAllIpcHandlers();
   console.log('[IPC] All IPC handlers registered');
+
+  // ✅ PHASE 3: Initialize performance optimization systems
+  memoryManager;  // Force initialization of singleton
+  screenshotCache;  // Force initialization of singleton
+  initializeModelCache();
+  console.log('[Performance] Optimization systems initialized (memory manager, screenshot cache, model cache)');
 
   // Register global client protocol
   registerClientProtocol(protocol);
